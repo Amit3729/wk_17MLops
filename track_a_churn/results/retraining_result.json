@@ -1,0 +1,25 @@
+{
+  "challenger_version": 2,
+  "champion_version": 1,
+  "promoted": true,
+  "challenger": {
+    "accuracy": 0.6514195583596214,
+    "precision": 0.5444743935309974,
+    "recall": 0.7952755905511811,
+    "f1": 0.6464,
+    "roc_auc": 0.7724305843348529
+  },
+  "champion": {
+    "accuracy": 0.6451104100946372,
+    "precision": 0.5425219941348973,
+    "recall": 0.7283464566929134,
+    "f1": 0.6218487394957983,
+    "roc_auc": 0.724740986324078
+  },
+  "reasons": [
+    "target (Churn) distribution drifted",
+    "custom test failed: Absolute change in mean MonthlyCharges (current vs reference): Actual value 19.285 >= 5.000",
+    "custom test failed: Absolute shift in Churn rate (current vs reference): Actual value 0.136 >= 0.050",
+    "ROC-AUC dropped 0.095 (> 0.05) on labelled current data"
+  ]
+}

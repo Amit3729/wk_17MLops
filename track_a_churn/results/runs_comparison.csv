@@ -1,0 +1,7 @@
+run,family,C,l1_ratio,class_weight,n_estimators,max_depth,learning_rate,scale_pos_weight,test_accuracy,test_precision,test_recall,test_f1,test_roc_auc,test_pr_auc,cv_roc_auc_mean,cv_f1_mean,overfit_gap_roc_auc,fit_seconds,predict_ms_per_1k_rows,run_id
+xgb_shallow_weighted,xgboost,-,-,-,400,3,0.05,2.7706,0.7302,0.4955,0.8321,0.6211,0.8409,0.6676,0.8456,0.6361,0.066,0.2984,6.4905,5c239585
+rf_shallow_balanced,random_forest,-,-,balanced_subsample,300,8,-,-,0.7333,0.4988,0.7824,0.6092,0.835,0.6516,0.8477,0.6333,0.0676,0.3731,33.059,047c76a6
+logreg_baseline,logistic_regression,1.0,0.0,None,-,-,-,-,0.8043,0.6507,0.5687,0.6069,0.8383,0.6654,0.8445,0.5924,0.0124,0.0219,5.2056,0dab532a
+logreg_l1_balanced,logistic_regression,0.1,1.0,balanced,-,-,-,-,0.717,0.4805,0.7977,0.5997,0.8348,0.6563,0.8441,0.6236,0.0142,0.0464,5.4457,1e19ad77
+xgb_deep_unweighted,xgboost,-,-,-,600,7,0.1,1.0,0.7718,0.5781,0.5229,0.5491,0.8012,0.584,0.8192,0.5553,0.1986,0.8517,7.4656,d4bcbdd5
+rf_deep_unweighted,random_forest,-,-,None,100,None,-,-,0.7779,0.5991,0.4962,0.5428,0.807,0.574,0.824,0.5575,0.193,0.1162,20.188,e9daa119

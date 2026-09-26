@@ -1,0 +1,38 @@
+{
+  "registered_model": "telco-churn-classifier",
+  "versions": [
+    {
+      "version": 1,
+      "current_stage": "Archived",
+      "aliases": [],
+      "run_id": "5c239585eeb14095b7ec3d1531b5ab81",
+      "run_name": "xgb_shallow_weighted",
+      "source": "models:/m-bdd857d46bfc496fb3562ba8bf776172",
+      "tags": {
+        "source_run_name": "xgb_shallow_weighted",
+        "promoted_to_staging_because": "highest test_f1 among finished runs (0.6211)",
+        "promoted_to_production_because": "staging validation reproduced hold-out F1 0.6211"
+      },
+      "test_f1": 0.6210826210826211,
+      "test_roc_auc": 0.840878178904306
+    },
+    {
+      "version": 2,
+      "current_stage": "Production",
+      "aliases": [
+        "production",
+        "staging"
+      ],
+      "run_id": "33ae4e04c5b54740ac20020024be7a5a",
+      "run_name": "xgb_shallow_weighted",
+      "source": "models:/m-9fe772b6c4684a1c8479607ad60547d1",
+      "tags": {
+        "source_run_name": "retrain-xgb_shallow_weighted",
+        "promoted_to_staging_because": "retrained after drift: recent hold-out F1 0.6464 vs champion v1 0.6218, ROC-AUC 0.7724 vs 0.7247",
+        "promoted_to_production_because": "beat champion on recent hold-out: recent hold-out F1 0.6464 vs champion v1 0.6218, ROC-AUC 0.7724 vs 0.7247"
+      },
+      "test_f1": 0.6464,
+      "test_roc_auc": 0.7724305843348529
+    }
+  ]
+}
