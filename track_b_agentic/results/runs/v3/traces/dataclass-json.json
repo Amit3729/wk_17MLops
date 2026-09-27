@@ -1,0 +1,217 @@
+{
+  "run_name": "v3",
+  "prompt_version": "v3",
+  "config": {
+    "prompt_version": "v3",
+    "prompt_file": "prompt_v3.txt",
+    "agent_mode": "single",
+    "provider": "groq",
+    "model": "openai/gpt-oss-120b",
+    "temperature": 0.2,
+    "top_p": 0.9,
+    "top_k": 4,
+    "max_iterations": 4,
+    "reasoning_effort": "low",
+    "recover_tool_answers": true,
+    "note": "Targets two v2 trace failures. (1) 4/8 runs still ended in HTTP 400 tool_use_failed (pseudo-tool 'json') despite v2's rule, so the prompt alone cannot fix it: recover_tool_answers=true accepts the rejected generation when it is a finished answer envelope. (2) 4/8 runs answered on turn 1 from the pre-retrieved context without searching (dataclass-json flagged 'never called search_knowledge_base'), while int-error spent 3 off-target searches and 15,819 tokens: v3 requires one targeted search (exact API name + source filter) and caps searching at two."
+  },
+  "case": {
+    "id": "dataclass-json",
+    "kind": "multi_hop",
+    "question": "How do I serialise a dataclass to JSON?",
+    "expect_documents": [
+      "library/dataclasses.html",
+      "library/json.html"
+    ],
+    "expect_tools": [
+      "search_knowledge_base"
+    ],
+    "forbid_tools": [],
+    "must_include": [],
+    "expect_decline": false
+  },
+  "prefetched_context": [
+    {
+      "document": "python-3.14-docs-html/library/json.html",
+      "anchor": "module-json",
+      "section": "json — JSON encoder and decoder",
+      "score": 0.7847,
+      "text": "... raise TypeError(f'Cannot serialize object of {type(obj)}') ... >>> json.dumps(1 + 2j, default=custom_json) '{\"__complex__\": true, \"real\": 1.0, \"imag\": 2.0}' ```\nDecoding JSON:\n``` >>> import json >>> json.loads('[\"foo\", {\"bar\":[\"baz\", null, 1.0, 2]}]') ['foo', {'bar': ['baz', None, 1.0, 2]}] >>> json.loads('\"\\\\\"foo\\\\bar\"') '\"foo\\x08ar' >>> from io import StringIO >>> io = StringIO('[\"streaming API\"]') >>> json.load(io) ['streaming API'] ```\nCustomizing JSON object decoding:\n``` >>> import json >>> def as_complex(dct): ... if '__complex__' in dct: ... return complex(dct['real'], dct['imag']) ... return dct ... >>> json.loads('{\"__complex__\": true, \"real\": 1, \"imag\": 2}', ... object_hook=as_complex) (1+2j) >>> import decimal >>> json.loads('1.1', parse_float=decimal.Decimal) Decimal('1.1') ```\nExtending JSONEncoder :\n``` >>> import json >>> class ComplexEncoder(json.JSONEncoder): ... def default(self, obj): ... if isinstance(obj, complex): ... return [obj.real, obj.imag] ... # Let the base class default method raise the TypeError ... return super().default(obj) ... >>> json.dumps(2 + 1j, cls=ComplexEncoder) '[2.0, 1.0]' >>> ComplexEncoder().encode(2 + 1j) '[2.0, 1.0]' >>> list(ComplexEncoder().iterencode(2 + 1j)) ['[2.0', ', 1.0', ']'] ```\nUsing json from the shell to validate and pretty-print:\n``` $ echo '{\"json\":\"obj\"}' | python"
+    },
+    {
+      "document": "python-3.14-docs-html/library/dataclasses.html",
+      "anchor": "module-contents",
+      "section": "dataclasses — Data Classes > Module contents",
+      "score": 0.7399,
+      "text": "pseudo-fields which are ClassVar or InitVar .\ndataclasses.asdict(obj, *, dict_factory=dict) Converts the dataclass obj to a dict (by using the factory function dict_factory ). Each dataclass is converted to a dict of its fields, as name: value pairs. dataclasses, dicts, lists, and tuples are recursed into. Other objects are copied with copy.deepcopy() . Example of using asdict() on nested dataclasses: ``` @dataclass class Point: x: int y: int\n@dataclass class C: mylist: list[Point]\np = Point(10, 20) assert asdict(p) == {'x': 10, 'y': 20}\nc = C([Point(0, 0), Point(10, 4)]) assert asdict(c) == {'mylist': [{'x': 0, 'y': 0}, {'x': 10, 'y': 4}]} ``` To create a shallow copy, the following workaround may be used: ``` {field.name: getattr(obj, field.name) for field in fields(obj)} ``` asdict() raises TypeError if obj is not a dataclass instance.\ndataclasses.astuple(obj, *, tuple_factory=tuple) Converts the dataclass obj to a tuple (by using the factory function tuple_factory ). Each dataclass is converted to a tuple of its field values. dataclasses, dicts, lists, and tuples are recursed into. Other objects are copied with copy.deepcopy()"
+    },
+    {
+      "document": "python-3.14-docs-html/library/json.html",
+      "anchor": "module-json",
+      "section": "json — JSON encoder and decoder",
+      "score": 0.7369,
+      "text": "... >>> json.dumps(2 + 1j, cls=ComplexEncoder) '[2.0, 1.0]' >>> ComplexEncoder().encode(2 + 1j) '[2.0, 1.0]' >>> list(ComplexEncoder().iterencode(2 + 1j)) ['[2.0', ', 1.0', ']'] ```\nUsing json from the shell to validate and pretty-print:\n``` $ echo '{\"json\":\"obj\"}' | python -m json { \"json\": \"obj\" } $ echo '{1.2:3.4}' | python -m json Expecting property name enclosed in double quotes: line 1 column 2 (char 1) ```\nSee Command-line interface for detailed documentation.\nNote\nJSON is a subset of YAML 1.2. The JSON produced by this module’s default settings (in particular, the default separators value) is also a subset of YAML 1.0 and 1.1. This module can thus also be used as a YAML serializer.\nNote\nThis module’s encoders and decoders preserve input and output order by default. Order is only lost if the underlying containers are unordered."
+    },
+    {
+      "document": "python-3.14-docs-html/library/dataclasses.html",
+      "anchor": "module-contents",
+      "section": "dataclasses — Data Classes > Module contents",
+      "score": 0.7359,
+      "text": "new class with __annotations__ can then apply the @dataclass function to convert that class to a dataclass. This function is provided as a convenience. For example: ``` C = make_dataclass('C', [('x', int), 'y', ('z', int, field(default=5))], namespace={'add_one': lambda self: self.x + 1}) ``` Is equivalent to: ``` @dataclass class C: x: int y: 'typing.Any' z: int = 5\ndef add_one(self): return self.x + 1 ``` Added in version 3.14: Added the decorator parameter.\ndataclasses.replace(obj, /, **changes) Creates a new object of the same type as obj , replacing fields with values from changes . If obj is not a Data Class, raises TypeError . If keys in changes are not field names of the given dataclass, raises TypeError . The newly returned object is created by calling the __init__() method of the dataclass. This ensures that __post_init__() , if present, is also called. Init-only variables without default values, if any exist, must be specified on the call to replace() so that they can be passed to __init__() and __post_init__() . It is an error for changes to contain"
+    }
+  ],
+  "steps": [
+    {
+      "step": 1,
+      "agent": "agent",
+      "decision": "call_tools",
+      "tools_offered": true,
+      "reasoning": "Need to search for dataclasses JSON serialization.",
+      "recovered_from": "",
+      "content": "",
+      "tool_calls": [
+        {
+          "name": "search_knowledge_base",
+          "arguments": {
+            "query": "dataclass json serialization json.dumps dataclasses.asdict",
+            "source": "python-3.14-docs-html",
+            "top_k": 5
+          },
+          "result": {
+            "query": "dataclass json serialization json.dumps dataclasses.asdict",
+            "matches": [
+              {
+                "document": "python-3.14-docs-html/library/dataclasses.html",
+                "chunk_id": 16,
+                "score": 0.8036,
+                "text": "pseudo-fields which are ClassVar or InitVar .\ndataclasses.asdict(obj, *, dict_factory=dict) Converts the dataclass obj to a dict (by using the factory function dict_factory ). Each dataclass is converted to a dict of its fields, as name: value pairs. dataclasses, dicts, lists, and tuples are recursed into. Other objects are copied with copy.deepcopy() . Example of using asdict() on nested dataclasses: ``` @dataclass class Point: x: int y: int\n@dataclass class C: mylist: list[Point]\np = Point(10, 20) assert asdict(p) == {'x': 10, 'y': 20}\nc = C([Point(0, 0), Point(10, 4)]) assert asdict(c) == {'mylist': [{'x': 0, 'y': 0}, {'x': 10, 'y': 4}]} ``` To create a shallow copy, the following workaround may be used: ``` {field.name: getattr(obj, field.name) for field in fields(obj)} ``` asdict() raises TypeError if obj is not a dataclass instance.\ndataclasses.astuple(obj, *, tuple_factory=tuple) Converts the dataclass obj to a tuple (by using the factory function tuple_factory ). Each dataclass is converted to a tuple of its field values. dataclasses, dicts, lists, and tuples are recursed into. Other objects are copied with copy.deepcopy()",
+                "title": "dataclasses — Data Classes",
+                "section": "dataclasses — Data Classes > Module contents",
+                "anchor": "module-contents",
+                "source": "python-3.14-docs-html"
+              },
+              {
+                "document": "python-3.14-docs-html/library/collections.html",
+                "chunk_id": 46,
+                "score": 0.7599,
+                "text": "collections — Container datatypes > UserDict objects\nThe class, UserDict acts as a wrapper around dictionary objects. The need for this class has been partially supplanted by the ability to subclass directly from dict ; however, this class can be easier to work with because the underlying dictionary is accessible as an attribute.\nclass collections.UserDict(**kwargs) class collections.UserDict(mapping, /, **kwargs) class collections.UserDict(iterable, /, **kwargs) Class that simulates a dictionary. The instance’s contents are kept in a regular dictionary, which is accessible via the data attribute of UserDict instances. If arguments are provided, they are used to initialize data , like a regular dictionary. In addition to supporting the methods and operations of mappings, UserDict instances provide the following attribute: data A real dictionary used to store the contents of the UserDict class.",
+                "title": "collections — Container datatypes",
+                "section": "collections — Container datatypes > UserDict objects",
+                "anchor": "userdict-objects",
+                "source": "python-3.14-docs-html"
+              },
+              {
+                "document": "python-3.14-docs-html/library/json.html",
+                "chunk_id": 2,
+                "score": 0.7527,
+                "text": "... raise TypeError(f'Cannot serialize object of {type(obj)}') ... >>> json.dumps(1 + 2j, default=custom_json) '{\"__complex__\": true, \"real\": 1.0, \"imag\": 2.0}' ```\nDecoding JSON:\n``` >>> import json >>> json.loads('[\"foo\", {\"bar\":[\"baz\", null, 1.0, 2]}]') ['foo', {'bar': ['baz', None, 1.0, 2]}] >>> json.loads('\"\\\\\"foo\\\\bar\"') '\"foo\\x08ar' >>> from io import StringIO >>> io = StringIO('[\"streaming API\"]') >>> json.load(io) ['streaming API'] ```\nCustomizing JSON object decoding:\n``` >>> import json >>> def as_complex(dct): ... if '__complex__' in dct: ... return complex(dct['real'], dct['imag']) ... return dct ... >>> json.loads('{\"__complex__\": true, \"real\": 1, \"imag\": 2}', ... object_hook=as_complex) (1+2j) >>> import decimal >>> json.loads('1.1', parse_float=decimal.Decimal) Decimal('1.1') ```\nExtending JSONEncoder :\n``` >>> import json >>> class ComplexEncoder(json.JSONEncoder): ... def default(self, obj): ... if isinstance(obj, complex): ... return [obj.real, obj.imag] ... # Let the base class default method raise the TypeError ... return super().default(obj) ... >>> json.dumps(2 + 1j, cls=ComplexEncoder) '[2.0, 1.0]' >>> ComplexEncoder().encode(2 + 1j) '[2.0, 1.0]' >>> list(ComplexEncoder().iterencode(2 + 1j)) ['[2.0', ', 1.0', ']'] ```\nUsing json from the shell to validate and pretty-print:\n``` $ echo '{\"json\":\"obj\"}' | python",
+                "title": "json — JSON encoder and decoder",
+                "section": "json — JSON encoder and decoder",
+                "anchor": "module-json",
+                "source": "python-3.14-docs-html"
+              },
+              {
+                "document": "python-3.14-docs-html/library/json.html",
+                "chunk_id": 4,
+                "score": 0.752,
+                "text": "json — JSON encoder and decoder > Basic Usage\njson.dump(obj, fp, *, skipkeys=False, ensure_ascii=True, check_circular=True, allow_nan=True, cls=None, indent=None, separators=None, default=None, sort_keys=False, **kw) Serialize obj as a JSON formatted stream to fp (a .write() -supporting file-like object ) using this Python-to-JSON conversion table . Note Unlike pickle and marshal , JSON is not a framed protocol, so trying to serialize multiple objects with repeated calls to dump() using the same fp will result in an invalid JSON file. Parameters : obj ( object ) – The Python object to be serialized. fp ( file-like object ) – The file-like object obj will be serialized to. The json module always produces str objects, not bytes objects, therefore fp.write() must support str input. skipkeys ( bool ) – If True , keys that are not of a basic type ( str , int , float , bool , None ) will be skipped instead of raising a TypeError . Default False . ensure_ascii ( bool ) – If True (the default), the output is guaranteed to have all incoming non-ASCII and non-printable",
+                "title": "json — JSON encoder and decoder",
+                "section": "json — JSON encoder and decoder > Basic Usage",
+                "anchor": "basic-usage",
+                "source": "python-3.14-docs-html"
+              },
+              {
+                "document": "python-3.14-docs-html/library/json.html",
+                "chunk_id": 7,
+                "score": 0.7433,
+                "text": "For the most compact JSON, specify (',', ':') to eliminate whitespace. default ( callable | None) – A function that is called for objects that can’t otherwise be serialized. It should return a JSON encodable version of the object or raise a TypeError . If None (the default), TypeError is raised. sort_keys ( bool ) – If True , dictionaries will be outputted sorted by key. Default False . Changed in version 3.2: Allow strings for indent in addition to integers. Changed in version 3.4: Use (',', ': ') as default if indent is not None . Changed in version 3.6: All optional parameters are now keyword-only .\njson.dumps(obj, *, skipkeys=False, ensure_ascii=True, check_circular=True, allow_nan=True, cls=None, indent=None, separators=None, default=None, sort_keys=False, **kw) Serialize obj to a JSON formatted str using this conversion table . The arguments have the same meaning as in dump() . Note Keys in key/value pairs of JSON are always of the type str . When a dictionary is converted into JSON, all the keys of the dictionary are coerced to strings. As a result of this, if",
+                "title": "json — JSON encoder and decoder",
+                "section": "json — JSON encoder and decoder > Basic Usage",
+                "anchor": "basic-usage",
+                "source": "python-3.14-docs-html"
+              }
+            ]
+          }
+        }
+      ],
+      "prompt_tokens": 2036,
+      "completion_tokens": 70,
+      "model_calls": 1,
+      "latency_ms": 1057
+    },
+    {
+      "step": 2,
+      "agent": "agent",
+      "decision": "final_answer",
+      "tools_offered": true,
+      "reasoning": "",
+      "recovered_from": "tool_use_failed: pseudo-tool 'json'",
+      "content": "{\"answer\": \"Convert the dataclass instance to a plain dict with `dataclasses.asdict()` and then pass that dict to `json.dumps()`. For example:\\n\\n```python\\nimport json\\nfrom dataclasses import dataclass, asdict\\n\\n@dataclass\\nclass Point:\\n    x: int\\n    y: int\\n\\np = Point(10, 20)\\njson_str = json.dumps(asdict(p))\\nprint(json_str)  # -> {\\\"x\\\": 10, \\\"y\\\": 20}\\n```\\n\\n`asdict` recursively turns nested dataclasses into dictionaries, which `json.dumps` can serialize. If you need custom handling (e.g., for non\\u2011JSON\\u2011serialisable fields), you can supply a `default` function to `json.dumps`.\\n\", \"confidence\": 0.97, \"citations\": [\"python-3.14-docs-html/library/dataclasses.html\", \"python-3.14-docs-html/library/json.html\"]}",
+      "tool_calls": [],
+      "prompt_tokens": 0,
+      "completion_tokens": 0,
+      "model_calls": 1,
+      "latency_ms": 42822
+    }
+  ],
+  "iterations": 2,
+  "termination": "success",
+  "error": "",
+  "final": {
+    "answer": "Convert the dataclass instance to a plain dict with `dataclasses.asdict()` and then pass that dict to `json.dumps()`. For example:\n\n```python\nimport json\nfrom dataclasses import dataclass, asdict\n\n@dataclass\nclass Point:\n    x: int\n    y: int\n\np = Point(10, 20)\njson_str = json.dumps(asdict(p))\nprint(json_str)  # -> {\"x\": 10, \"y\": 20}\n```\n\n`asdict` recursively turns nested dataclasses into dictionaries, which `json.dumps` can serialize. If you need custom handling (e.g., for non‑JSON‑serialisable fields), you can supply a `default` function to `json.dumps`.\n",
+    "confidence": 0.97,
+    "citations": [
+      "python-3.14-docs-html/library/dataclasses.html",
+      "python-3.14-docs-html/library/json.html"
+    ],
+    "agent_mode": "single"
+  },
+  "usage": {
+    "prompt_tokens": 2036,
+    "completion_tokens": 70,
+    "total_tokens": 2106,
+    "model_calls": 2,
+    "wait_ms": 41788
+  },
+  "latency_ms": 43926,
+  "latency_net_ms": 2138,
+  "cost_usd": 0.0003474,
+  "harness": {
+    "case_id": "dataclass-json",
+    "kind": "multi_hop",
+    "mode": "single",
+    "fault": "none",
+    "agent_mode": "single",
+    "answered": true,
+    "completed": true,
+    "grounded": true,
+    "declined": false,
+    "tools_correct": true,
+    "tools_called": [
+      "search_knowledge_base"
+    ],
+    "argument_problems": [],
+    "tool_errors": [],
+    "retrieval_broke": false,
+    "documents": [
+      "python-3.14-docs-html/library/collections.html",
+      "python-3.14-docs-html/library/dataclasses.html",
+      "python-3.14-docs-html/library/json.html"
+    ],
+    "matched_documents": [
+      "library/dataclasses.html",
+      "library/json.html"
+    ],
+    "iterations": 2,
+    "prompt_tokens": 2036,
+    "completion_tokens": 70,
+    "total_tokens": 2106,
+    "model_calls": 2,
+    "latency_ms": 43926,
+    "confidence": 0.97,
+    "researchers": 0,
+    "failure": "",
+    "reason": "",
+    "answer": "Convert the dataclass instance to a plain dict with `dataclasses.asdict()` and then pass that dict to `json.dumps()`. For example:\n\n```python\nimport json\nfrom dataclasses import dataclass, asdict\n\n@dataclass\nclass Point:\n    x: int\n    y: int\n\np = Point(10, 20)\njson_str = json.dumps(asdict(p))\nprint(json_str)  # -> {\"x\": 10, \"y\": 20}\n```\n\n`asdict` recursively turns nested dataclasses into dictionaries, which `json.dumps` can serialize. If you need custom handling (e.g., for non‑JSON‑serialisable fields), you can supply a `default` function to `json.dumps`."
+  }
+}

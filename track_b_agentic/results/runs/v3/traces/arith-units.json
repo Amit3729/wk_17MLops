@@ -1,0 +1,158 @@
+{
+  "run_name": "v3",
+  "prompt_version": "v3",
+  "config": {
+    "prompt_version": "v3",
+    "prompt_file": "prompt_v3.txt",
+    "agent_mode": "single",
+    "provider": "groq",
+    "model": "openai/gpt-oss-120b",
+    "temperature": 0.2,
+    "top_p": 0.9,
+    "top_k": 4,
+    "max_iterations": 4,
+    "reasoning_effort": "low",
+    "recover_tool_answers": true,
+    "note": "Targets two v2 trace failures. (1) 4/8 runs still ended in HTTP 400 tool_use_failed (pseudo-tool 'json') despite v2's rule, so the prompt alone cannot fix it: recover_tool_answers=true accepts the rejected generation when it is a finished answer envelope. (2) 4/8 runs answered on turn 1 from the pre-retrieved context without searching (dataclass-json flagged 'never called search_knowledge_base'), while int-error spent 3 off-target searches and 15,819 tokens: v3 requires one targeted search (exact API name + source filter) and caps searching at two."
+  },
+  "case": {
+    "id": "arith-units",
+    "kind": "arithmetic",
+    "question": "Compute 16535 * 4096 / 1048576 and give the result.",
+    "expect_documents": [],
+    "expect_tools": [
+      "calculator"
+    ],
+    "forbid_tools": [
+      "search_knowledge_base"
+    ],
+    "must_include": [
+      "64.5"
+    ],
+    "expect_decline": false
+  },
+  "prefetched_context": [
+    {
+      "document": "python-3.14-docs-html/tutorial/floatingpoint.html",
+      "anchor": "representation-error",
+      "section": "15. Floating-Point Arithmetic: Issues and Limitations > 15.1. Representation Error",
+      "score": 0.7218,
+      "text": "out to 55 decimal digits:\n``` >>> 3602879701896397 * 10 ** 55 // 2 ** 55 1000000000000000055511151231257827021181583404541015625 ```\nmeaning that the exact number stored in the computer is equal to the decimal value 0.1000000000000000055511151231257827021181583404541015625. Instead of displaying the full decimal value, many languages (including older versions of Python), round the result to 17 significant digits:\n``` >>> format(0.1, '.17f') '0.10000000000000001' ```\nThe fractions and decimal modules make these calculations easy:\n``` >>> from decimal import Decimal >>> from fractions import Fraction\n>>> Fraction.from_float(0.1) Fraction(3602879701896397, 36028797018963968)\n>>> (0.1).as_integer_ratio() (3602879701896397, 36028797018963968)\n>>> Decimal.from_float(0.1) Decimal('0.1000000000000000055511151231257827021181583404541015625')\n>>> format(Decimal.from_float(0.1), '.17') '0.10000000000000001' ```"
+    },
+    {
+      "document": "python-3.14-docs-html/tutorial/floatingpoint.html",
+      "anchor": "floating-point-arithmetic-issues-and-limitations",
+      "section": "15. Floating-Point Arithmetic: Issues and Limitations",
+      "score": 0.7195,
+      "text": "``` >>> arr = [-0.10430216751806065, -266310978.67179024, 143401161448607.16, ... -143401161400469.7, 266262841.31058735, -0.003244936839808227] >>> float(sum(map(Fraction, arr))) # Exact summation with single rounding 8.042173697819788e-13 >>> math.fsum(arr) # Single rounding 8.042173697819788e-13 >>> sum(arr) # Multiple roundings in extended precision 8.042178034628478e-13 >>> total = 0.0 >>> for x in arr: ... total += x # Multiple roundings in standard precision ... >>> total # Straight addition has no correct digits! -0.0051575902860057365 ```"
+    },
+    {
+      "document": "python-3.14-docs-html/library/decimal.html",
+      "anchor": "recipes",
+      "section": "decimal — Decimal fixed-point and floating-point arithmetic > Recipes",
+      "score": 0.7086,
+      "text": "x = x % (2 * pi).\n>>> print(cos(Decimal('0.5'))) 0.8775825618903727161162815826 >>> print(cos(0.5)) 0.87758256189 >>> print(cos(0.5+0j)) (0.87758256189+0j)\n\"\"\" getcontext().prec += 2 i, lasts, s, fact, num, sign = 0, 0, 1, 1, 1, 1 while s != lasts: lasts = s i += 2 fact *= i * (i-1) num *= x * x sign *= -1 s += num / fact * sign getcontext().prec -= 2 return +s\ndef sin(x): \"\"\"Return the sine of x as measured in radians.\nThe Taylor series approximation works best for a small value of x. For larger values, first compute x = x % (2 * pi).\n>>> print(sin(Decimal('0.5'))) 0.4794255386042030002732879352 >>> print(sin(0.5)) 0.479425538604 >>> print(sin(0.5+0j)) (0.479425538604+0j)\n\"\"\" getcontext().prec += 2 i, lasts, s, fact, num, sign = 1, 0, x, 1, x, 1 while s != lasts: lasts = s i += 2 fact *= i * (i-1) num *= x * x sign *= -1 s += num / fact * sign getcontext().prec -= 2 return +s ```"
+    },
+    {
+      "document": "python-3.14-docs-html/tutorial/floatingpoint.html",
+      "anchor": "floating-point-arithmetic-issues-and-limitations",
+      "section": "15. Floating-Point Arithmetic: Issues and Limitations",
+      "score": 0.7078,
+      "text": "```\nor, better,\n``` 0.33 ```\nor, better,\n``` 0.333 ```\nand so on. No matter how many digits you’re willing to write down, the result will never be exactly 1/3, but will be an increasingly better approximation of 1/3.\nIn the same way, no matter how many base 2 digits you’re willing to use, the decimal value 0.1 cannot be represented exactly as a base 2 fraction. In base 2, 1/10 is the infinitely repeating fraction\n``` 0.0001100110011001100110011001100110011001100110011... ```\nStop at any finite number of bits, and you get an approximation. On most machines today, floats are approximated using a binary fraction with the numerator using the first 53 bits starting with the most significant bit and with the denominator as a power of two. In the case of 1/10, the binary fraction is 3602879701896397 / 2 ** 55 which is close to but not exactly equal to the true value of 1/10.\nMany users are not aware of the approximation because of the way values are displayed. Python only"
+    }
+  ],
+  "steps": [
+    {
+      "step": 1,
+      "agent": "agent",
+      "decision": "call_tools",
+      "tools_offered": true,
+      "reasoning": "We need compute expression. Use calculator tool.",
+      "recovered_from": "",
+      "content": "",
+      "tool_calls": [
+        {
+          "name": "calculator",
+          "arguments": {
+            "expression": "16535 * 4096 / 1048576"
+          },
+          "result": {
+            "expression": "16535 * 4096 / 1048576",
+            "result": 64.58984375
+          }
+        }
+      ],
+      "prompt_tokens": 1852,
+      "completion_tokens": 43,
+      "model_calls": 1,
+      "latency_ms": 654
+    },
+    {
+      "step": 2,
+      "agent": "agent",
+      "decision": "final_answer",
+      "tools_offered": true,
+      "reasoning": "",
+      "recovered_from": "tool_use_failed: pseudo-tool 'json'",
+      "content": "{\"answer\": \"64.58984375\", \"confidence\": 1.0, \"citations\": []}",
+      "tool_calls": [],
+      "prompt_tokens": 0,
+      "completion_tokens": 0,
+      "model_calls": 1,
+      "latency_ms": 45744
+    }
+  ],
+  "iterations": 2,
+  "termination": "success",
+  "error": "",
+  "final": {
+    "answer": "64.58984375",
+    "confidence": 1.0,
+    "citations": [],
+    "agent_mode": "single"
+  },
+  "usage": {
+    "prompt_tokens": 1852,
+    "completion_tokens": 43,
+    "total_tokens": 1895,
+    "model_calls": 2,
+    "wait_ms": 45108
+  },
+  "latency_ms": 46440,
+  "latency_net_ms": 1332,
+  "cost_usd": 0.00030359999999999995,
+  "harness": {
+    "case_id": "arith-units",
+    "kind": "arithmetic",
+    "mode": "single",
+    "fault": "none",
+    "agent_mode": "single",
+    "answered": true,
+    "completed": true,
+    "grounded": true,
+    "declined": false,
+    "tools_correct": true,
+    "tools_called": [
+      "calculator"
+    ],
+    "argument_problems": [],
+    "tool_errors": [],
+    "retrieval_broke": false,
+    "documents": [
+      "python-3.14-docs-html/library/decimal.html",
+      "python-3.14-docs-html/tutorial/floatingpoint.html"
+    ],
+    "matched_documents": [],
+    "iterations": 2,
+    "prompt_tokens": 1852,
+    "completion_tokens": 43,
+    "total_tokens": 1895,
+    "model_calls": 2,
+    "latency_ms": 46440,
+    "confidence": 1.0,
+    "researchers": 0,
+    "failure": "",
+    "reason": "",
+    "answer": "64.58984375"
+  }
+}

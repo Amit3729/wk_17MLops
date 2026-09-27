@@ -1,12 +1,12 @@
 {
   "scenario": "drifted",
-  "checked_at": "2026-09-26T15:03:00+00:00",
+  "checked_at": "2026-09-26T15:32:10+00:00",
   "reference_rows": 4930,
   "current_rows": 2113,
   "current_path": "data/current_drifted.csv",
   "production_model": {
     "version": 1,
-    "run_id": "5c239585eeb14095b7ec3d1531b5ab81"
+    "run_id": "7dc8861aeab14c40a7d545ba64cc0095"
   },
   "data_drift": {
     "n_features": 19,
@@ -74,19 +74,19 @@
         "drifted": false
       },
       "InternetService": {
-        "score": 0.03228127411126543,
+        "score": 0.03228127411126544,
         "method": "Jensen-Shannon distance",
         "threshold": 0.1,
         "drifted": false
       },
       "OnlineSecurity": {
-        "score": 0.0641403406408279,
+        "score": 0.06414034064082798,
         "method": "Jensen-Shannon distance",
         "threshold": 0.1,
         "drifted": false
       },
       "OnlineBackup": {
-        "score": 0.05764976907416001,
+        "score": 0.057649769074160626,
         "method": "Jensen-Shannon distance",
         "threshold": 0.1,
         "drifted": false
@@ -104,7 +104,7 @@
         "drifted": false
       },
       "StreamingTV": {
-        "score": 0.07082894354795552,
+        "score": 0.0708289435479556,
         "method": "Jensen-Shannon distance",
         "threshold": 0.1,
         "drifted": false
@@ -128,7 +128,7 @@
         "drifted": false
       },
       "PaymentMethod": {
-        "score": 0.07284010415602366,
+        "score": 0.07284010415602338,
         "method": "Jensen-Shannon distance",
         "threshold": 0.1,
         "drifted": false

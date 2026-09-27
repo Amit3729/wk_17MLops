@@ -1,0 +1,192 @@
+{
+  "run_name": "v4",
+  "prompt_version": "v4",
+  "config": {
+    "prompt_version": "v4",
+    "prompt_file": "prompt_v4.txt",
+    "agent_mode": "single",
+    "provider": "groq",
+    "model": "openai/gpt-oss-120b",
+    "temperature": 0.2,
+    "top_p": 0.9,
+    "top_k": 3,
+    "max_iterations": 3,
+    "reasoning_effort": "low",
+    "recover_tool_answers": true,
+    "note": "Cost cut after the golden set was frozen. v3 traces: every search asked for top_k 5 and the loop also pre-retrieved top_k 4 chunks, so json-indent spent 5,245 prompt tokens for 2 turns on json.html chunks it already had; max 3 turns were ever used of 4. v4: pre-retrieval top_k 4->3, prompt asks for top_k 3 per search and short answers, max_iterations 4->3."
+  },
+  "case": {
+    "id": "int-error",
+    "kind": "single_hop",
+    "question": "Which exception does int() raise when given a non-numeric string?",
+    "expect_documents": [
+      "builtins/functions.html",
+      "builtins/exceptions.html",
+      "library/exceptions.html"
+    ],
+    "expect_tools": [
+      "search_knowledge_base"
+    ],
+    "forbid_tools": [],
+    "must_include": [
+      "ValueError"
+    ],
+    "expect_decline": false
+  },
+  "prefetched_context": [
+    {
+      "document": "python-3.14-docs-html/builtins/exceptions.html",
+      "anchor": "concrete-exceptions",
+      "section": "Built-in Exceptions > Concrete exceptions",
+      "score": 0.7685,
+      "text": "the constructor. (Defaults to None .)\nexception TypeError Raised when an operation or function is applied to an object of inappropriate type. The associated value is a string giving details about the type mismatch. This exception may be raised by user code to indicate that an attempted operation on an object is not supported, and is not meant to be. If an object is meant to support a given operation but has not yet provided an implementation, NotImplementedError is the proper exception to raise. Passing arguments of the wrong type (e.g. passing a list when an int is expected) should result in a TypeError , but passing arguments with the wrong value (e.g. a number outside expected boundaries) should result in a ValueError .\nexception UnboundLocalError Raised when a reference is made to a local variable in a function or method, but no value has been bound to that variable. This is a subclass of NameError .\nexception UnicodeError Raised when a Unicode-related encoding or decoding error occurs. It is a subclass of ValueError . UnicodeError has"
+    },
+    {
+      "document": "python-3.14-docs-html/whatsnew/3.11.html",
+      "anchor": "other-cpython-implementation-changes",
+      "section": "What’s New In Python 3.11 > Other CPython Implementation Changes",
+      "score": 0.7585,
+      "text": "now available using the respective --help-env and --help-xoptions flags, and with the new --help-all . (Contributed by Éric Araujo in bpo-46142 .) Converting between int and str in bases other than 2 (binary), 4, 8 (octal), 16 (hexadecimal), or 32 such as base 10 (decimal) now raises a ValueError if the number of digits in string form is above a limit to avoid potential denial of service attacks due to the algorithmic complexity. This is a mitigation for CVE 2020-10735 . This limit can be configured or disabled by environment variable, command line flag, or sys APIs. See the integer string conversion length limitation documentation. The default limit is 4300 digits in string form."
+    },
+    {
+      "document": "python-3.14-docs-html/builtins/stdtypes.html",
+      "anchor": "affected-apis",
+      "section": "Built-in Types > Integer string conversion length limitation > Affected APIs",
+      "score": 0.7582,
+      "text": "Built-in Types > Integer string conversion length limitation > Affected APIs\nThe limitation only applies to potentially slow conversions between int and str or bytes :\nint(string) with default base 10. int(string, base) for all bases that are not a power of 2. str(integer) . repr(integer) . any other string conversion to base 10, for example f\"{integer}\" , \"{}\".format(integer) , or b\"%d\" % integer .\nThe limitations do not apply to functions with a linear algorithm:\nint(string, base) with base 2, 4, 8, 16, or 32. int.from_bytes() and int.to_bytes() . hex() , oct() , bin() . Format specification mini-language for hex, octal, and binary numbers. str to float . str to decimal.Decimal ."
+    }
+  ],
+  "steps": [
+    {
+      "step": 1,
+      "agent": "agent",
+      "decision": "call_tools",
+      "tools_offered": true,
+      "reasoning": "We need to answer: Which exception does int() raise when given a non-numeric string? Likely ValueError. Need to search.",
+      "recovered_from": "",
+      "content": "",
+      "tool_calls": [
+        {
+          "name": "search_knowledge_base",
+          "arguments": {
+            "query": "int() raises exception non-numeric string",
+            "source": "python-3.14-docs-html",
+            "top_k": 3
+          },
+          "result": {
+            "query": "int() raises exception non-numeric string",
+            "matches": [
+              {
+                "document": "python-3.14-docs-html/builtins/exceptions.html",
+                "chunk_id": 23,
+                "score": 0.7419,
+                "text": "the constructor. (Defaults to None .)\nexception TypeError Raised when an operation or function is applied to an object of inappropriate type. The associated value is a string giving details about the type mismatch. This exception may be raised by user code to indicate that an attempted operation on an object is not supported, and is not meant to be. If an object is meant to support a given operation but has not yet provided an implementation, NotImplementedError is the proper exception to raise. Passing arguments of the wrong type (e.g. passing a list when an int is expected) should result in a TypeError , but passing arguments with the wrong value (e.g. a number outside expected boundaries) should result in a ValueError .\nexception UnboundLocalError Raised when a reference is made to a local variable in a function or method, but no value has been bound to that variable. This is a subclass of NameError .\nexception UnicodeError Raised when a Unicode-related encoding or decoding error occurs. It is a subclass of ValueError . UnicodeError has",
+                "title": "Built-in Exceptions",
+                "section": "Built-in Exceptions > Concrete exceptions",
+                "anchor": "concrete-exceptions",
+                "source": "python-3.14-docs-html"
+              },
+              {
+                "document": "python-3.14-docs-html/whatsnew/3.11.html",
+                "chunk_id": 23,
+                "score": 0.7418,
+                "text": "now available using the respective --help-env and --help-xoptions flags, and with the new --help-all . (Contributed by Éric Araujo in bpo-46142 .) Converting between int and str in bases other than 2 (binary), 4, 8 (octal), 16 (hexadecimal), or 32 such as base 10 (decimal) now raises a ValueError if the number of digits in string form is above a limit to avoid potential denial of service attacks due to the algorithmic complexity. This is a mitigation for CVE 2020-10735 . This limit can be configured or disabled by environment variable, command line flag, or sys APIs. See the integer string conversion length limitation documentation. The default limit is 4300 digits in string form.",
+                "title": "What’s New In Python 3.11",
+                "section": "What’s New In Python 3.11 > Other CPython Implementation Changes",
+                "anchor": "other-cpython-implementation-changes",
+                "source": "python-3.14-docs-html"
+              },
+              {
+                "document": "python-3.14-docs-html/howto/argparse.html",
+                "chunk_id": 20,
+                "score": 0.7351,
+                "text": "None value, and that cannot be compared to an int value (hence the TypeError exception).\nAnd:\n``` $ python prog.py 4 16 ```\nYou can go quite far just with what we’ve learned so far, and we have only scratched the surface. The argparse module is very powerful, and we’ll explore a bit more of it before we end this tutorial.",
+                "title": "Argparse Tutorial",
+                "section": "Argparse Tutorial > Combining Positional and Optional arguments",
+                "anchor": "combining-positional-and-optional-arguments",
+                "source": "python-3.14-docs-html"
+              }
+            ]
+          }
+        }
+      ],
+      "prompt_tokens": 1403,
+      "completion_tokens": 87,
+      "model_calls": 1,
+      "latency_ms": 1094
+    },
+    {
+      "step": 2,
+      "agent": "agent",
+      "decision": "final_answer",
+      "tools_offered": true,
+      "reasoning": "",
+      "recovered_from": "tool_use_failed: pseudo-tool 'json'",
+      "content": "{\"answer\": \"int() raises a ValueError when given a non\\u2011numeric string.\", \"confidence\": 0.93, \"citations\": [\"python-3.14-docs-html/builtins/exceptions.html\"]}",
+      "tool_calls": [],
+      "prompt_tokens": 0,
+      "completion_tokens": 0,
+      "model_calls": 1,
+      "latency_ms": 1494
+    }
+  ],
+  "iterations": 2,
+  "termination": "success",
+  "error": "",
+  "final": {
+    "answer": "int() raises a ValueError when given a non‑numeric string.",
+    "confidence": 0.93,
+    "citations": [
+      "python-3.14-docs-html/builtins/exceptions.html"
+    ],
+    "agent_mode": "single"
+  },
+  "usage": {
+    "prompt_tokens": 1403,
+    "completion_tokens": 87,
+    "total_tokens": 1490,
+    "model_calls": 2,
+    "wait_ms": 0
+  },
+  "latency_ms": 2631,
+  "latency_net_ms": 2631,
+  "cost_usd": 0.00026265,
+  "harness": {
+    "case_id": "int-error",
+    "kind": "single_hop",
+    "mode": "single",
+    "fault": "none",
+    "agent_mode": "single",
+    "answered": true,
+    "completed": true,
+    "grounded": true,
+    "declined": false,
+    "tools_correct": true,
+    "tools_called": [
+      "search_knowledge_base"
+    ],
+    "argument_problems": [],
+    "tool_errors": [],
+    "retrieval_broke": false,
+    "documents": [
+      "python-3.14-docs-html/builtins/exceptions.html",
+      "python-3.14-docs-html/builtins/stdtypes.html",
+      "python-3.14-docs-html/howto/argparse.html",
+      "python-3.14-docs-html/whatsnew/3.11.html"
+    ],
+    "matched_documents": [
+      "builtins/exceptions.html"
+    ],
+    "iterations": 2,
+    "prompt_tokens": 1403,
+    "completion_tokens": 87,
+    "total_tokens": 1490,
+    "model_calls": 2,
+    "latency_ms": 2631,
+    "confidence": 0.93,
+    "researchers": 0,
+    "failure": "",
+    "reason": "",
+    "answer": "int() raises a ValueError when given a non‑numeric string."
+  }
+}

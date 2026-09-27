@@ -1,0 +1,5 @@
+{"at": "2026-09-26T15:32:07+00:00", "version": 1, "from": "None", "to": "Staging", "alias": "staging", "reason": "highest test_f1 among finished runs (0.6211)"}
+{"at": "2026-09-26T15:32:07+00:00", "version": 1, "from": "Staging", "to": "Production", "alias": "production", "reason": "staging validation reproduced hold-out F1 0.6211"}
+{"at": "2026-09-26T15:32:14+00:00", "version": 2, "from": "None", "to": "Staging", "alias": "staging", "reason": "retrained after drift: recent hold-out F1 0.6464 vs champion v1 0.6218, ROC-AUC 0.7724 vs 0.7247"}
+{"at": "2026-09-26T15:32:14+00:00", "version": 2, "from": "Staging", "to": "Production", "alias": "production", "reason": "beat champion on recent hold-out: recent hold-out F1 0.6464 vs champion v1 0.6218, ROC-AUC 0.7724 vs 0.7247"}
+{"at": "2026-09-26T15:32:14+00:00", "version": 1, "from": "Production", "to": "Archived", "alias": null, "reason": "archived automatically when version 2 was promoted to Production"}

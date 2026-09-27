@@ -5,9 +5,9 @@
       "version": 1,
       "current_stage": "Archived",
       "aliases": [],
-      "run_id": "5c239585eeb14095b7ec3d1531b5ab81",
+      "run_id": "7dc8861aeab14c40a7d545ba64cc0095",
       "run_name": "xgb_shallow_weighted",
-      "source": "models:/m-bdd857d46bfc496fb3562ba8bf776172",
+      "source": "models:/m-d7fafc2ebb984b658bed0f18309d6c2d",
       "tags": {
         "source_run_name": "xgb_shallow_weighted",
         "promoted_to_staging_because": "highest test_f1 among finished runs (0.6211)",
@@ -23,9 +23,9 @@
         "production",
         "staging"
       ],
-      "run_id": "33ae4e04c5b54740ac20020024be7a5a",
+      "run_id": "31d0448de20c4169b3cc6295e50d414c",
       "run_name": "xgb_shallow_weighted",
-      "source": "models:/m-9fe772b6c4684a1c8479607ad60547d1",
+      "source": "models:/m-1d0977ecc79040b9aa1a7326c6511e81",
       "tags": {
         "source_run_name": "retrain-xgb_shallow_weighted",
         "promoted_to_staging_because": "retrained after drift: recent hold-out F1 0.6464 vs champion v1 0.6218, ROC-AUC 0.7724 vs 0.7247",

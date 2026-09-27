@@ -1,0 +1,294 @@
+{
+  "v4": [
+    {
+      "case_id": "json-indent",
+      "kind": "single_hop",
+      "mode": "single",
+      "fault": "none",
+      "agent_mode": "single",
+      "answered": true,
+      "completed": true,
+      "grounded": true,
+      "declined": false,
+      "tools_correct": true,
+      "tools_called": [
+        "search_knowledge_base"
+      ],
+      "argument_problems": [],
+      "tool_errors": [],
+      "retrieval_broke": false,
+      "documents": [
+        "python-3.14-docs-html/library/json.html"
+      ],
+      "matched_documents": [
+        "library/json.html"
+      ],
+      "iterations": 2,
+      "prompt_tokens": 4218,
+      "completion_tokens": 209,
+      "total_tokens": 4427,
+      "model_calls": 2,
+      "latency_ms": 2678,
+      "confidence": 0.97,
+      "researchers": 0,
+      "failure": "",
+      "reason": "",
+      "answer": "The *indent* argument controls pretty\u2011printing. If it is a non\u2011negative integer, each level of JSON objects/arrays is indented by that many spaces; if it is a string (e.g., \"\\t\"), that string is used for each level. An indent of 0, a negative value, or an empty string inserts only newlines. The default ``None`` produces the most compact output (no extra whitespace)."
+    },
+    {
+      "case_id": "read-lines",
+      "kind": "single_hop",
+      "mode": "single",
+      "fault": "none",
+      "agent_mode": "single",
+      "answered": true,
+      "completed": true,
+      "grounded": true,
+      "declined": false,
+      "tools_correct": true,
+      "tools_called": [
+        "search_knowledge_base"
+      ],
+      "argument_problems": [],
+      "tool_errors": [],
+      "retrieval_broke": false,
+      "documents": [
+        "python-3.14-docs-html/c-api/file.html",
+        "python-3.14-docs-html/library/fileinput.html",
+        "python-3.14-docs-html/tutorial/inputoutput.html"
+      ],
+      "matched_documents": [
+        "tutorial/inputoutput.html"
+      ],
+      "iterations": 2,
+      "prompt_tokens": 1540,
+      "completion_tokens": 66,
+      "total_tokens": 1606,
+      "model_calls": 2,
+      "latency_ms": 48960,
+      "confidence": 0.97,
+      "researchers": 0,
+      "failure": "",
+      "reason": "",
+      "answer": "Open the file with `open()` and iterate over the file object:\n```python\nwith open('myfile.txt', 'r', encoding='utf-8') as f:\n    for line in f:\n        print(line, end='')\n```\nThe `for line in f` loop reads the file line\u2011by\u2011line, which is memory\u2011efficient and stops when an empty string is returned (EOF)."
+    },
+    {
+      "case_id": "int-error",
+      "kind": "single_hop",
+      "mode": "single",
+      "fault": "none",
+      "agent_mode": "single",
+      "answered": true,
+      "completed": true,
+      "grounded": true,
+      "declined": false,
+      "tools_correct": true,
+      "tools_called": [
+        "search_knowledge_base"
+      ],
+      "argument_problems": [],
+      "tool_errors": [],
+      "retrieval_broke": false,
+      "documents": [
+        "python-3.14-docs-html/builtins/exceptions.html",
+        "python-3.14-docs-html/builtins/stdtypes.html",
+        "python-3.14-docs-html/howto/argparse.html",
+        "python-3.14-docs-html/whatsnew/3.11.html"
+      ],
+      "matched_documents": [
+        "builtins/exceptions.html"
+      ],
+      "iterations": 2,
+      "prompt_tokens": 1403,
+      "completion_tokens": 87,
+      "total_tokens": 1490,
+      "model_calls": 2,
+      "latency_ms": 2631,
+      "confidence": 0.93,
+      "researchers": 0,
+      "failure": "",
+      "reason": "",
+      "answer": "int() raises a ValueError when given a non\u2011numeric string."
+    },
+    {
+      "case_id": "tz-convert",
+      "kind": "multi_hop",
+      "mode": "single",
+      "fault": "none",
+      "agent_mode": "single",
+      "answered": true,
+      "completed": false,
+      "grounded": false,
+      "declined": false,
+      "tools_correct": true,
+      "tools_called": [
+        "search_knowledge_base"
+      ],
+      "argument_problems": [],
+      "tool_errors": [],
+      "retrieval_broke": false,
+      "documents": [
+        "python-3.14-docs-html/library/datetime.html"
+      ],
+      "matched_documents": [
+        "library/datetime.html"
+      ],
+      "iterations": 2,
+      "prompt_tokens": 1691,
+      "completion_tokens": 79,
+      "total_tokens": 1770,
+      "model_calls": 2,
+      "latency_ms": 55195,
+      "confidence": 0.97,
+      "researchers": 0,
+      "failure": "soft",
+      "reason": "cited ['library/datetime.html'], needed 2 of ['library/datetime.html', 'library/zoneinfo.html']",
+      "answer": "Create an aware datetime by passing a tzinfo (e.g. datetime.timezone.utc or a custom tzinfo subclass) to the constructor or by using datetime.now(tz). Then call .astimezone(target_tz) to convert it. Example:\n```python\nimport datetime as dt\n# aware datetime in UTC\nnow_utc = dt.datetime.now(dt.timezone.utc)\n# convert to US/Eastern (fixed\u2011offset example)\neastern = dt.timezone(dt.timedelta(hours=-5))\nnow_eastern = now_utc.astimezone(eastern)\nprint(now_utc, now_eastern)\n```"
+    },
+    {
+      "case_id": "dataclass-json",
+      "kind": "multi_hop",
+      "mode": "single",
+      "fault": "none",
+      "agent_mode": "single",
+      "answered": true,
+      "completed": true,
+      "grounded": true,
+      "declined": false,
+      "tools_correct": true,
+      "tools_called": [
+        "search_knowledge_base"
+      ],
+      "argument_problems": [],
+      "tool_errors": [],
+      "retrieval_broke": false,
+      "documents": [
+        "python-3.14-docs-html/library/collections.html",
+        "python-3.14-docs-html/library/dataclasses.html",
+        "python-3.14-docs-html/library/json.html"
+      ],
+      "matched_documents": [
+        "library/dataclasses.html",
+        "library/json.html"
+      ],
+      "iterations": 2,
+      "prompt_tokens": 1813,
+      "completion_tokens": 70,
+      "total_tokens": 1883,
+      "model_calls": 2,
+      "latency_ms": 49877,
+      "confidence": 0.97,
+      "researchers": 0,
+      "failure": "",
+      "reason": "",
+      "answer": "Convert the dataclass to a plain dict with `dataclasses.asdict()` and then pass that dict to `json.dumps()`. Example:\n```python\nfrom dataclasses import dataclass, asdict\nimport json\n\n@dataclass\nclass Point:\n    x: int\n    y: int\n\np = Point(1, 2)\njson_str = json.dumps(asdict(p))\nprint(json_str)  # {\"x\": 1, \"y\": 2}\n```"
+    },
+    {
+      "case_id": "arith-units",
+      "kind": "arithmetic",
+      "mode": "single",
+      "fault": "none",
+      "agent_mode": "single",
+      "answered": true,
+      "completed": true,
+      "grounded": true,
+      "declined": false,
+      "tools_correct": true,
+      "tools_called": [
+        "calculator"
+      ],
+      "argument_problems": [],
+      "tool_errors": [],
+      "retrieval_broke": false,
+      "documents": [
+        "python-3.14-docs-html/library/decimal.html",
+        "python-3.14-docs-html/tutorial/floatingpoint.html"
+      ],
+      "matched_documents": [],
+      "iterations": 2,
+      "prompt_tokens": 3352,
+      "completion_tokens": 88,
+      "total_tokens": 3440,
+      "model_calls": 2,
+      "latency_ms": 44815,
+      "confidence": 1.0,
+      "researchers": 0,
+      "failure": "",
+      "reason": "",
+      "answer": "16535 * 4096 / 1048576 = 64.58984375"
+    },
+    {
+      "case_id": "project-serving",
+      "kind": "single_hop",
+      "mode": "single",
+      "fault": "none",
+      "agent_mode": "single",
+      "answered": true,
+      "completed": true,
+      "grounded": true,
+      "declined": false,
+      "tools_correct": true,
+      "tools_called": [
+        "search_knowledge_base"
+      ],
+      "argument_problems": [],
+      "tool_errors": [],
+      "retrieval_broke": false,
+      "documents": [
+        "knowledge.md",
+        "python-3.14-docs-html/howto/logging-cookbook.html",
+        "python-3.14-docs-html/library/wsgiref.html",
+        "python-3.14-docs-html/whatsnew/3.3.html",
+        "serving.md"
+      ],
+      "matched_documents": [
+        "serving.md"
+      ],
+      "iterations": 2,
+      "prompt_tokens": 1344,
+      "completion_tokens": 57,
+      "total_tokens": 1401,
+      "model_calls": 2,
+      "latency_ms": 1968,
+      "confidence": 0.93,
+      "researchers": 0,
+      "failure": "",
+      "reason": "",
+      "answer": "The project uses **vLLM** as its serving engine. It was chosen because vLLM provides an OpenAI\u2011compatible API for locally hosted open\u2011source models and boosts throughput with paged attention and continuous batching, making it efficient for high\u2011volume inference."
+    },
+    {
+      "case_id": "out-of-corpus-pricing",
+      "kind": "unanswerable",
+      "mode": "single",
+      "fault": "none",
+      "agent_mode": "single",
+      "answered": true,
+      "completed": true,
+      "grounded": true,
+      "declined": true,
+      "tools_correct": true,
+      "tools_called": [
+        "search_knowledge_base"
+      ],
+      "argument_problems": [],
+      "tool_errors": [],
+      "retrieval_broke": false,
+      "documents": [
+        "knowledge.md",
+        "serving.md"
+      ],
+      "matched_documents": [],
+      "iterations": 2,
+      "prompt_tokens": 1392,
+      "completion_tokens": 59,
+      "total_tokens": 1451,
+      "model_calls": 2,
+      "latency_ms": 53236,
+      "confidence": 0.9,
+      "researchers": 0,
+      "failure": "",
+      "reason": "",
+      "answer": "The available documentation does not contain information about the OpenAI batch API pricing per million tokens for 2026."
+    }
+  ]
+}
