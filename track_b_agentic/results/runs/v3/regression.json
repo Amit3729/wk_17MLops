@@ -1,0 +1,123 @@
+{
+  "html": "reports/evidently_v3.html",
+  "n_cases": 8,
+  "pct_tests_passed": 1.0,
+  "pct_cases_passed": 1.0,
+  "correctness_rate": 1.0,
+  "citation_rate": 1.0,
+  "gate_threshold": 0.8,
+  "gate_passed": true,
+  "evidently_tests": [
+    {
+      "name": "Mean value of 'Correct vs reference': Greater or Equal 1.000",
+      "status": "SUCCESS",
+      "description": "Share of passed 'Correct vs reference' row tests: Actual value 1.000 >= 1.000"
+    },
+    {
+      "name": "Mean value of 'Cites sources': Greater or Equal 1.000",
+      "status": "SUCCESS",
+      "description": "Share of passed 'Cites sources' row tests: Actual value 1.000 >= 1.000"
+    },
+    {
+      "name": "Row count in dataset: Greater 0.000",
+      "status": "SUCCESS",
+      "description": "Row count in dataset: Actual value 8.000 >= 0.000"
+    },
+    {
+      "name": "Column 'Correctness' missing values: Equal 0.000",
+      "status": "SUCCESS",
+      "description": "Column 'Correctness' missing values: Actual value 0.000  expected 0.000"
+    },
+    {
+      "name": "Mean value of 'Tests_success_rate': Greater or Equal 0.800",
+      "status": "SUCCESS",
+      "description": "Mean value of 'Tests_success_rate': Actual value 1.000 >= 0.800"
+    }
+  ],
+  "evidently_tests_failed": 0,
+  "per_case": [
+    {
+      "case_id": "arith-units",
+      "correctness": "correct",
+      "correctness_reasoning": "The provided answer exactly matches the reference calculation result of 16535 * 4096 / 1048576, which is 64.58984375. No contradictions or missing information are present.",
+      "cites_ok": true,
+      "checks_passed": 2,
+      "all_passed": true,
+      "response": "64.58984375\n\nCitations: (none)",
+      "reference": "16535 * 4096 / 1048576 = 64.58984375."
+    },
+    {
+      "case_id": "dataclass-json",
+      "correctness": "correct",
+      "correctness_reasoning": "The provided answer repeats the reference solution verbatim: it describes using dataclasses.asdict() to convert the dataclass to a dict and then json.dumps() to serialize it, includes the same example code, mentions recursive conversion of nested dataclasses, and notes the optional default function for non\u2011JSON\u2011serialisable fields. This aligns fully with the reference and contains no contradictions.",
+      "cites_ok": true,
+      "checks_passed": 2,
+      "all_passed": true,
+      "response": "Convert the dataclass instance to a plain dict with `dataclasses.asdict()` and then pass that dict to `json.dumps()`. For example:\n\n```python\nimport json\nfrom dataclasses import dataclass, asdict\n\n@dataclass\nclass Point:\n    x: int\n    y: int\n\np = Point(10, 20)\njson_str = json.dumps(asdict(p))\nprint(json_str)  # -> {\"x\": 10, \"y\": 20}\n```\n\n`asdict` recursively turns nested dataclasses into dictionaries, which `json.dumps` can serialize. If you need custom handling (e.g., for non\u2011JSON\u2011serialisable fields), you can supply a `default` function to `json.dumps`.\n\n\nCitations: python-3.14-docs-html/library/dataclasses.html, python-3.14-docs-html/library/json.html",
+      "reference": "Convert the dataclass instance to a plain dict with `dataclasses.asdict()` and then pass that dict to `json.dumps()`. For example:\n\n```python\nimport json\nfrom dataclasses import dataclass, asdict\n\n@dataclass\nclass Point:\n    x: int\n    y: int\n\np = Point(10, 20)\njson_str = json.dumps(asdict(p))\nprint(json_str)  # -> {\"x\": 10, \"y\": 20}\n```\n\n`asdict` recursively turns nested dataclasses into dictionaries, which `json.dumps` can serialize. If you need custom handling (e.g., for non\u2011JSON\u2011serialisable fields), you can supply a `default` function to `json.dumps`.\n"
+    },
+    {
+      "case_id": "int-error",
+      "correctness": "correct",
+      "correctness_reasoning": "The answer states that int() raises a ValueError for non-numeric strings, which matches the reference that specifies int() raises ValueError when the string is not a valid integer literal.",
+      "cites_ok": true,
+      "checks_passed": 2,
+      "all_passed": true,
+      "response": "int() raises a ValueError when it is given a non\u2011numeric string.\n\nCitations: python-3.14-docs-html/builtins/exceptions.html",
+      "reference": "int() raises ValueError when the string is not a valid integer literal, e.g. int('abc'). builtins/functions.html#int says a string argument must represent an integer in the given radix (optional sign, whitespace, underscores between digits); builtins/exceptions.html defines ValueError as the exception for an argument of the right type but an inappropriate value."
+    },
+    {
+      "case_id": "json-indent",
+      "correctness": "correct",
+      "correctness_reasoning": "The provided answer repeats the key facts from the reference: it explains that indent controls pretty\u2011printing, describes behavior for integer and string values, notes that 0, negative, or empty string result in only newlines, and that the default None yields the most compact output. This matches the reference without contradiction.",
+      "cites_ok": true,
+      "checks_passed": 2,
+      "all_passed": true,
+      "response": "The *indent* argument controls pretty\u2011printing of the JSON output. If you pass a non\u2011negative integer, each level of nesting is indented by that many spaces; if you pass a string (e.g., \"\\t\"), that string is used for each indentation level. An *indent* of 0, a negative number, or the empty string results in only newlines being inserted. The default value is ``None``, which produces the most compact representation (no extra whitespace).\n\nCitations: python-3.14-docs-html/library/json.html",
+      "reference": "The *indent* argument controls pretty\u2011printing of the JSON output. If you pass a non\u2011negative integer, each level of nesting is indented by that many spaces; if you pass a string (e.g., \"\\t\"), that string is used for each indentation level. An *indent* of 0, a negative number, or the empty string results in only newlines being inserted. The default value is ``None``, which produces the most compact representation (no extra whitespace)."
+    },
+    {
+      "case_id": "out-of-corpus-pricing",
+      "correctness": "correct",
+      "correctness_reasoning": "The reference states that the indexed documents do not contain OpenAI batch API pricing, so the appropriate response is to say the information is unavailable. The answer matches this by stating the documentation lacks the information and does not provide a price, which aligns with the reference.",
+      "cites_ok": true,
+      "checks_passed": 2,
+      "all_passed": true,
+      "response": "The available documentation does not contain information about the cost of the OpenAI batch API per million tokens in 2026.\n\nCitations: (none)",
+      "reference": "The indexed documents (the CPython 3.14 manual and this project's notes) do not contain OpenAI batch API pricing, so the assistant should say it cannot answer rather than give a price."
+    },
+    {
+      "case_id": "project-serving",
+      "correctness": "correct",
+      "correctness_reasoning": "The answer identifies vLLM as the serving engine and cites the same reasons as the reference: OpenAI\u2011compatible API for open\u2011source models and higher throughput via paged attention and continuous batching. This aligns exactly with the reference content.",
+      "cites_ok": true,
+      "checks_passed": 2,
+      "all_passed": true,
+      "response": "The project uses **vLLM** as its serving engine. vLLM provides an OpenAI\u2011compatible API for serving open\u2011source models (e.g., Llama\u202f3, Mistral) locally and was chosen because it delivers high throughput through paged attention (reducing memory fragmentation) and continuous batching (admitting new requests into a running batch), making it well\u2011suited for low\u2011latency, high\u2011concurrency inference.\n\nCitations: serving.md",
+      "reference": "For self-hosted model serving the project uses vLLM (the `vllm` provider mode, next to the keyless `local` mode and hosted `openai`). serving.md gives the reasons: vLLM exposes an OpenAI-compatible API for serving open-source models such as Llama 3 or Mistral locally, and it raises throughput with paged attention (the KV cache is stored in non-contiguous pages, cutting memory fragmentation) and continuous batching (new requests join a running batch instead of waiting for it to finish)."
+    },
+    {
+      "case_id": "read-lines",
+      "correctness": "correct",
+      "correctness_reasoning": "The answer states to open the file with a with\u2011open block and iterate over the file object using `for line in f:`, matching the reference's recommended method. It also mentions `f.readline()` as an alternative, which aligns with the reference. No contradictions or missing key facts are present.",
+      "cites_ok": true,
+      "checks_passed": 2,
+      "all_passed": true,
+      "response": "Open the file with `open()` and iterate over the file object. For example:\n\n```python\nwith open('myfile.txt', 'r') as f:\n    for line in f:\n        print(line, end='')\n```\n\nIterating directly over the file object reads the file line by line in a memory\u2011efficient way. You can also use `f.readline()` in a loop, but the `for line in f` construct is the recommended idiom.\n\nCitations: python-3.14-docs-html/tutorial/inputoutput.html",
+      "reference": "Open the file (ideally with a `with open(...) as f:` block) and loop over the file object: `for line in f: print(line, end='')`. The tutorial calls this memory efficient, fast and simple. Alternatives: call f.readline() repeatedly (it returns '' at end of file, while a blank line is '\\n'), or read all lines into a list with list(f) or f.readlines()."
+    },
+    {
+      "case_id": "tz-convert",
+      "correctness": "correct",
+      "correctness_reasoning": "The response correctly describes attaching a tzinfo via ZoneInfo or datetime.timezone, using datetime.now(timezone.utc), replace(tzinfo=...), and converting with astimezone(ZoneInfo(...)). These points align with the reference answer and contain no contradictions.",
+      "cites_ok": true,
+      "checks_passed": 2,
+      "all_passed": true,
+      "response": "To make a datetime object timezone\u2011aware you must attach a tzinfo object (either a fixed\u2011offset subclass such as `datetime.timezone` or a zoneinfo object). The usual ways are:\n\n1. **Create an aware datetime directly**\n   ```python\n   import datetime as dt\n   # UTC aware datetime\n   dt_utc = dt.datetime(2024, 5, 1, 12, 0, tzinfo=dt.timezone.utc)\n   # Fixed\u2011offset timezone (e.g. UTC+2)\n   tz_plus2 = dt.timezone(dt.timedelta(hours=2), name=\"UTC+02\")\n   dt_local = dt.datetime(2024, 5, 1, 14, 0, tzinfo=tz_plus2)\n   ```\n   The `tzinfo` argument must be an instance of a `tzinfo` subclass (the docs state *\"it must be an instance of a tzinfo subclass\"*).  `datetime.timezone` is the built\u2011in fixed\u2011offset subclass.\n\n2. **Create an aware datetime from the current time**\n   ```python\n   now_utc = dt.datetime.now(dt.timezone.utc)   # aware UTC now\n   ```\n   The manual recommends this over `datetime.utcnow()` because the result is aware.\n\n3. **Convert an aware datetime to another timezone**\n   ```python\n   # Convert the UTC datetime to US/Eastern (requires zoneinfo)\n   from zoneinfo import ZoneInfo\n   eastern = ZoneInfo(\"America/New_York\")\n   now_eastern = now_utc.astimezone(eastern)\n   ```\n   `datetime.astimezone(tz)` returns a new datetime whose `tzinfo` is set to `tz` and whose date\u2011time values are adjusted so that the underlying UTC instant is unchanged.  If `tz` is omitted, the system local timezone is used.\n\n4. **Alternative: attach a timezone without changing the clock**\n   ```python\n   naive = dt.datetime(2024, 5, 1, 12, 0)          # naive\n   aware = naive.replace(tzinfo=dt.timezone.utc) # just label it as UTC\n   ```\n   This does **not** shift the clock; it only records the timezone.\n\nPutting it together, a typical workflow is:\n```python\nimport datetime as dt\nfrom zoneinfo import ZoneInfo\n\n# 1. Build an aware datetime (UTC now)\naware_dt = dt.datetime.now(dt.timezone.utc)\n\n# 2. Convert to another zone, e.g. Europe/Paris\nparis_tz = ZoneInfo(\"Europe/Paris\")\nparis_dt = aware_dt.astimezone(paris_tz)\n\nprint(aware_dt)   # 2024-05-01 12:00:00+00:00\nprint(paris_dt)   # 2024-05-01 14:00:00+02:00\n```\nThis demonstrates how to create a timezone\u2011aware datetime and convert it to any other timezone.\n\n**Key points from the documentation**:\n- Use a `tzinfo` subclass (e.g., `datetime.timezone` or a `zoneinfo.ZoneInfo` instance) when constructing an aware datetime.\n- `datetime.now(timezone.utc)` is the recommended way to get the current UTC aware datetime.\n- `datetime.astimezone(tz)` adjusts the datetime to the target timezone while preserving the same instant in UTC.\n- `replace(tzinfo=tz)` can be used to attach a timezone without conversion.\n\n\nCitations: python-3.14-docs-html/library/datetime.html, python-3.14-docs-html/library/datetime.html",
+      "reference": "Attach a tzinfo when building the datetime: e.g. datetime(2020, 10, 31, 12, tzinfo=ZoneInfo(\"America/Los_Angeles\")) using zoneinfo.ZoneInfo (IANA zones), or datetime.timezone for a fixed offset such as timezone.utc; datetime.now(timezone.utc) gives an aware current time, and replace(tzinfo=...) labels a naive datetime without shifting the clock. Convert with aware_dt.astimezone(ZoneInfo(\"Europe/Paris\")): astimezone(tz) returns a datetime whose tzinfo is tz, adjusted so it represents the same UTC instant in tz's local time. Sources: library/datetime.html and library/zoneinfo.html ('Using ZoneInfo')."
+    }
+  ],
+  "golden_source_runs": [
+    "v3"
+  ]
+}

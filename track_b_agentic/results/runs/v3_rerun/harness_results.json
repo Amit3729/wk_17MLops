@@ -1,0 +1,309 @@
+{
+  "v3_rerun": [
+    {
+      "case_id": "json-indent",
+      "kind": "single_hop",
+      "mode": "single",
+      "fault": "none",
+      "agent_mode": "single",
+      "answered": true,
+      "completed": true,
+      "grounded": true,
+      "declined": false,
+      "tools_correct": true,
+      "tools_called": [
+        "search_knowledge_base"
+      ],
+      "argument_problems": [],
+      "tool_errors": [],
+      "retrieval_broke": false,
+      "documents": [
+        "python-3.14-docs-html/library/json.html",
+        "python-3.14-docs-html/whatsnew/3.4.html"
+      ],
+      "matched_documents": [
+        "library/json.html"
+      ],
+      "iterations": 2,
+      "prompt_tokens": 5245,
+      "completion_tokens": 216,
+      "total_tokens": 5461,
+      "model_calls": 2,
+      "latency_ms": 41808,
+      "confidence": 0.97,
+      "researchers": 0,
+      "failure": "",
+      "reason": "",
+      "answer": "The `indent` argument controls pretty\u2011printing of the JSON output. If you pass a non\u2011negative integer, each level of nesting is indented by that many spaces; if you pass a string (e.g., \"\\t\"), that string is used for each indentation level. An `indent` of 0, a negative number, or an empty string results in only newlines being inserted (no spaces). The default value `None` produces the most compact representation with no added whitespace."
+    },
+    {
+      "case_id": "read-lines",
+      "kind": "single_hop",
+      "mode": "single",
+      "fault": "none",
+      "agent_mode": "single",
+      "answered": true,
+      "completed": true,
+      "grounded": true,
+      "declined": false,
+      "tools_correct": true,
+      "tools_called": [
+        "search_knowledge_base"
+      ],
+      "argument_problems": [],
+      "tool_errors": [],
+      "retrieval_broke": false,
+      "documents": [
+        "python-3.14-docs-html/c-api/file.html",
+        "python-3.14-docs-html/library/csv.html",
+        "python-3.14-docs-html/library/fileinput.html",
+        "python-3.14-docs-html/tutorial/inputoutput.html"
+      ],
+      "matched_documents": [
+        "tutorial/inputoutput.html"
+      ],
+      "iterations": 2,
+      "prompt_tokens": 1706,
+      "completion_tokens": 71,
+      "total_tokens": 1777,
+      "model_calls": 2,
+      "latency_ms": 47743,
+      "confidence": 0.97,
+      "researchers": 0,
+      "failure": "",
+      "reason": "",
+      "answer": "Open the file with `open()` and then iterate over the file object. For example:\n\n```python\nwith open('myfile.txt', 'r') as f:\n    for line in f:\n        print(line, end='')\n```\n\nIterating directly over the file object reads the file line\u2011by\u2011line, is memory\u2011efficient, and stops when an empty string is returned (EOF). You can also use `f.readline()` in a loop, but the `for line in f` idiom is the recommended simple approach."
+    },
+    {
+      "case_id": "int-error",
+      "kind": "single_hop",
+      "mode": "single",
+      "fault": "none",
+      "agent_mode": "single",
+      "answered": true,
+      "completed": true,
+      "grounded": true,
+      "declined": false,
+      "tools_correct": true,
+      "tools_called": [
+        "search_knowledge_base",
+        "search_knowledge_base",
+        "search_knowledge_base"
+      ],
+      "argument_problems": [],
+      "tool_errors": [],
+      "retrieval_broke": false,
+      "documents": [
+        "python-3.14-docs-html/builtins/exceptions.html",
+        "python-3.14-docs-html/builtins/stdtypes.html",
+        "python-3.14-docs-html/howto/argparse.html",
+        "python-3.14-docs-html/howto/descriptor.html",
+        "python-3.14-docs-html/library/traceback.html",
+        "python-3.14-docs-html/library/unicodedata.html",
+        "python-3.14-docs-html/whatsnew/2.5.html",
+        "python-3.14-docs-html/whatsnew/3.11.html",
+        "python-3.14-docs-html/whatsnew/3.7.html",
+        "python-3.14-docs-html/whatsnew/3.8.html"
+      ],
+      "matched_documents": [
+        "builtins/exceptions.html"
+      ],
+      "iterations": 4,
+      "prompt_tokens": 15450,
+      "completion_tokens": 308,
+      "total_tokens": 15758,
+      "model_calls": 4,
+      "latency_ms": 115891,
+      "confidence": 0.9,
+      "researchers": 0,
+      "failure": "",
+      "reason": "",
+      "answer": "int() raises a ValueError when given a non\u2011numeric string."
+    },
+    {
+      "case_id": "tz-convert",
+      "kind": "multi_hop",
+      "mode": "single",
+      "fault": "none",
+      "agent_mode": "single",
+      "answered": true,
+      "completed": false,
+      "grounded": false,
+      "declined": false,
+      "tools_correct": true,
+      "tools_called": [
+        "search_knowledge_base"
+      ],
+      "argument_problems": [],
+      "tool_errors": [],
+      "retrieval_broke": false,
+      "documents": [
+        "python-3.14-docs-html/library/datetime.html",
+        "python-3.14-docs-html/library/time.html"
+      ],
+      "matched_documents": [
+        "library/datetime.html"
+      ],
+      "iterations": 2,
+      "prompt_tokens": 1763,
+      "completion_tokens": 82,
+      "total_tokens": 1845,
+      "model_calls": 2,
+      "latency_ms": 52943,
+      "confidence": 0.97,
+      "researchers": 0,
+      "failure": "soft",
+      "reason": "cited ['library/datetime.html'], needed 2 of ['library/datetime.html', 'library/zoneinfo.html']",
+      "answer": "Use a tzinfo object (e.g. an instance of ``datetime.timezone`` or a custom ``tzinfo`` subclass) when you create the ``datetime``. That makes the object *aware*.\n\n```python\nimport datetime as dt\n\n# Fixed\u2011offset timezone, e.g. UTC+2\ntz = dt.timezone(dt.timedelta(hours=2), name=\"UTC+02\")\n# Build an aware datetime\naware_dt = dt.datetime(2024, 5, 1, 15, 30, tzinfo=tz)\nprint(aware_dt)               # 2024-05-01 15:30:00+02:00\n```\n\nTo convert it to another zone, call ``datetime.astimezone`` with the target tzinfo. If you pass ``datetime.timezone.utc`` you get the UTC representation; otherwise pass any other tzinfo (or ``None`` to use the system local zone).\n\n```python\n# Convert to UTC\nutc_dt = aware_dt.astimezone(dt.timezone.utc)\nprint(utc_dt)                 # 2024-05-01 13:30:00+00:00\n\n# Convert to a different fixed offset, e.g. UTC\u20115\ntarget_tz = dt.timezone(dt.timedelta(hours=-5), name=\"UTC-05\")\nconverted = aware_dt.astimezone(target_tz)\nprint(converted)              # 2024-05-01 08:30:00-05:00\n```\n\nIf you start from a *naive* datetime (no ``tzinfo``), you must first attach a timezone, either by using ``replace`` or by constructing a new aware instance, before calling ``astimezone``.\n\n```python\nnaive = dt.datetime(2024, 5, 1, 15, 30)   # no tzinfo\n# Assume it represents local time in Europe/Paris (UTC+2 in summer)\naware = naive.replace(tzinfo=dt.timezone(dt.timedelta(hours=2)))\nprint(aware.astimezone(dt.timezone.utc))\n```\n\nThese steps are described in the CPython documentation for ``datetime`` objects and the ``datetime.astimezone`` method."
+    },
+    {
+      "case_id": "dataclass-json",
+      "kind": "multi_hop",
+      "mode": "single",
+      "fault": "none",
+      "agent_mode": "single",
+      "answered": true,
+      "completed": true,
+      "grounded": true,
+      "declined": false,
+      "tools_correct": true,
+      "tools_called": [
+        "search_knowledge_base"
+      ],
+      "argument_problems": [],
+      "tool_errors": [],
+      "retrieval_broke": false,
+      "documents": [
+        "python-3.14-docs-html/library/collections.html",
+        "python-3.14-docs-html/library/dataclasses.html",
+        "python-3.14-docs-html/library/json.html"
+      ],
+      "matched_documents": [
+        "library/dataclasses.html",
+        "library/json.html"
+      ],
+      "iterations": 2,
+      "prompt_tokens": 2036,
+      "completion_tokens": 70,
+      "total_tokens": 2106,
+      "model_calls": 2,
+      "latency_ms": 45268,
+      "confidence": 0.97,
+      "researchers": 0,
+      "failure": "",
+      "reason": "",
+      "answer": "Convert the dataclass instance to a plain dict with `dataclasses.asdict()` and then pass that dict to `json.dumps()`. For example:\n```python\nimport json\nfrom dataclasses import dataclass, asdict\n\n@dataclass\nclass Point:\n    x: int\n    y: int\n\np = Point(10, 20)\njson_str = json.dumps(asdict(p))\nprint(json_str)  # {\"x\": 10, \"y\": 20}\n```\n`asdict` recursively turns nested dataclasses into dictionaries, making the result JSON\u2011serialisable. If you need custom handling (e.g., for non\u2011JSON\u2011compatible types), you can supply a `default` function to `json.dumps`."
+    },
+    {
+      "case_id": "arith-units",
+      "kind": "arithmetic",
+      "mode": "single",
+      "fault": "none",
+      "agent_mode": "single",
+      "answered": true,
+      "completed": true,
+      "grounded": true,
+      "declined": false,
+      "tools_correct": true,
+      "tools_called": [
+        "calculator"
+      ],
+      "argument_problems": [],
+      "tool_errors": [],
+      "retrieval_broke": false,
+      "documents": [
+        "python-3.14-docs-html/library/decimal.html",
+        "python-3.14-docs-html/tutorial/floatingpoint.html"
+      ],
+      "matched_documents": [],
+      "iterations": 2,
+      "prompt_tokens": 1852,
+      "completion_tokens": 42,
+      "total_tokens": 1894,
+      "model_calls": 2,
+      "latency_ms": 46774,
+      "confidence": 1.0,
+      "researchers": 0,
+      "failure": "",
+      "reason": "",
+      "answer": "64.58984375"
+    },
+    {
+      "case_id": "project-serving",
+      "kind": "single_hop",
+      "mode": "single",
+      "fault": "none",
+      "agent_mode": "single",
+      "answered": true,
+      "completed": true,
+      "grounded": true,
+      "declined": false,
+      "tools_correct": true,
+      "tools_called": [
+        "search_knowledge_base"
+      ],
+      "argument_problems": [],
+      "tool_errors": [],
+      "retrieval_broke": false,
+      "documents": [
+        "knowledge.md",
+        "python-3.14-docs-html/howto/logging-cookbook.html",
+        "python-3.14-docs-html/library/wsgiref.html",
+        "python-3.14-docs-html/whatsnew/3.3.html",
+        "retrieval.md",
+        "root/serving.md",
+        "serving.md"
+      ],
+      "matched_documents": [
+        "serving.md"
+      ],
+      "iterations": 2,
+      "prompt_tokens": 1531,
+      "completion_tokens": 58,
+      "total_tokens": 1589,
+      "model_calls": 2,
+      "latency_ms": 51339,
+      "confidence": 0.93,
+      "researchers": 0,
+      "failure": "",
+      "reason": "",
+      "answer": "The project uses **vLLM** as its serving engine. vLLM provides an OpenAI\u2011compatible API for serving open\u2011source models (e.g., Llama\u202f3, Mistral) locally and is chosen because it delivers high throughput through paged attention (reducing memory fragmentation) and continuous batching (admitting new requests into a running batch), making it well\u2011suited for low\u2011latency, high\u2011concurrency chat assistants."
+    },
+    {
+      "case_id": "out-of-corpus-pricing",
+      "kind": "unanswerable",
+      "mode": "single",
+      "fault": "none",
+      "agent_mode": "single",
+      "answered": true,
+      "completed": true,
+      "grounded": true,
+      "declined": true,
+      "tools_correct": true,
+      "tools_called": [
+        "search_knowledge_base"
+      ],
+      "argument_problems": [],
+      "tool_errors": [],
+      "retrieval_broke": false,
+      "documents": [
+        "knowledge.md",
+        "python-3.14-docs-html/whatsnew/2.7.html",
+        "retrieval.md",
+        "serving.md"
+      ],
+      "matched_documents": [],
+      "iterations": 2,
+      "prompt_tokens": 1631,
+      "completion_tokens": 59,
+      "total_tokens": 1690,
+      "model_calls": 2,
+      "latency_ms": 45410,
+      "confidence": 0.9,
+      "researchers": 0,
+      "failure": "",
+      "reason": "",
+      "answer": "The available documentation does not contain information about the cost of the OpenAI batch API per million tokens in 2026."
+    }
+  ]
+}

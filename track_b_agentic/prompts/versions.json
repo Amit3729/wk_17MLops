@@ -1,0 +1,32 @@
+{
+  "v1": {
+    "prompt_file": "prompt_v1.txt",
+    "temperature": 0.2,
+    "top_k": 4,
+    "max_iterations": 4,
+    "note": "W15 single-loop system prompt, verbatim from app/llm.py (SYSTEM_PROMPT). Baseline."
+  },
+  "v2": {
+    "prompt_file": "prompt_v2.txt",
+    "temperature": 0.2,
+    "top_k": 4,
+    "max_iterations": 4,
+    "note": "v1 + an explicit answer-delivery rule. Targets v1's only failure: 8/8 runs ended in HTTP 400 tool_use_failed because gpt-oss wrapped its final JSON in a call to a non-existent tool named 'json'. Config unchanged so the prompt is the only variable."
+  },
+  "v3": {
+    "prompt_file": "prompt_v3.txt",
+    "temperature": 0.2,
+    "top_k": 4,
+    "max_iterations": 4,
+    "recover_tool_answers": true,
+    "note": "Targets two v2 trace failures. (1) 4/8 runs still ended in HTTP 400 tool_use_failed (pseudo-tool 'json') despite v2's rule, so the prompt alone cannot fix it: recover_tool_answers=true accepts the rejected generation when it is a finished answer envelope. (2) 4/8 runs answered on turn 1 from the pre-retrieved context without searching (dataclass-json flagged 'never called search_knowledge_base'), while int-error spent 3 off-target searches and 15,819 tokens: v3 requires one targeted search (exact API name + source filter) and caps searching at two."
+  },
+  "v4": {
+    "prompt_file": "prompt_v4.txt",
+    "temperature": 0.2,
+    "top_k": 3,
+    "max_iterations": 3,
+    "recover_tool_answers": true,
+    "note": "Cost cut after the golden set was frozen. v3 traces: every search asked for top_k 5 and the loop also pre-retrieved top_k 4 chunks, so json-indent spent 5,245 prompt tokens for 2 turns on json.html chunks it already had; max 3 turns were ever used of 4. v4: pre-retrieval top_k 4->3, prompt asks for top_k 3 per search and short answers, max_iterations 4->3."
+  }
+}

@@ -1,0 +1,123 @@
+{
+  "html": "reports/evidently_v2.html",
+  "n_cases": 8,
+  "pct_tests_passed": 0.5,
+  "pct_cases_passed": 0.5,
+  "correctness_rate": 0.5,
+  "citation_rate": 0.5,
+  "gate_threshold": 0.8,
+  "gate_passed": false,
+  "evidently_tests": [
+    {
+      "name": "Mean value of 'Correct vs reference': Greater or Equal 1.000",
+      "status": "FAIL",
+      "description": "Share of passed 'Correct vs reference' row tests: Actual value 0.500 < 1.000"
+    },
+    {
+      "name": "Mean value of 'Cites sources': Greater or Equal 1.000",
+      "status": "FAIL",
+      "description": "Share of passed 'Cites sources' row tests: Actual value 0.500 < 1.000"
+    },
+    {
+      "name": "Row count in dataset: Greater 0.000",
+      "status": "SUCCESS",
+      "description": "Row count in dataset: Actual value 8.000 >= 0.000"
+    },
+    {
+      "name": "Column 'Correctness' missing values: Equal 0.000",
+      "status": "SUCCESS",
+      "description": "Column 'Correctness' missing values: Actual value 0.000  expected 0.000"
+    },
+    {
+      "name": "Mean value of 'Tests_success_rate': Greater or Equal 0.800",
+      "status": "FAIL",
+      "description": "Mean value of 'Tests_success_rate': Actual value 0.500 < 0.800"
+    }
+  ],
+  "evidently_tests_failed": 3,
+  "per_case": [
+    {
+      "case_id": "arith-units",
+      "correctness": "correct",
+      "correctness_reasoning": "The provided answer matches the reference calculation exactly (16535 * 4096 / 1048576 = 64.58984375). No contradictions or missing information are present.",
+      "cites_ok": true,
+      "checks_passed": 2,
+      "all_passed": true,
+      "response": "The result of 16535 * 4096 / 1048576 is 64.58984375.\n\nCitations: (none)",
+      "reference": "16535 * 4096 / 1048576 = 64.58984375."
+    },
+    {
+      "case_id": "dataclass-json",
+      "correctness": "correct",
+      "correctness_reasoning": "The answer correctly states that a dataclass instance can be converted to a dict using `dataclasses.asdict()` and then serialized with `json.dumps()`, matching the reference. The example code aligns with the reference (importing json and dataclasses, defining a dataclass, creating an instance, and calling `json.dumps(dataclasses.asdict(p))`). The additional mention of custom encoders is consistent with the reference's note about providing a `default` function for non\u2011JSON\u2011serialisable fields, and does not contradict any key facts.",
+      "cites_ok": true,
+      "checks_passed": 2,
+      "all_passed": true,
+      "response": "Convert the dataclass instance to a plain dict with `dataclasses.asdict()` (or a custom shallow\u2011copy if you need only top\u2011level fields) and then pass that dict to `json.dumps()`. For example:\n\n```python\nimport json, dataclasses\n\n@dataclasses.dataclass\nclass Point:\n    x: int\n    y: int\n\np = Point(10, 20)\njson_str = json.dumps(dataclasses.asdict(p))\nprint(json_str)  # {\"x\": 10, \"y\": 20}\n```\n\nIf you need a custom encoder (e.g., to handle nested dataclasses or special types), you can subclass `json.JSONEncoder` and call `json.dumps(obj, cls=YourEncoder)`, but the simplest built\u2011in way is `json.dumps(dataclasses.asdict(your_dataclass))`.\n\nCitations: python-3.14-docs-html/library/dataclasses.html, python-3.14-docs-html/library/json.html",
+      "reference": "Convert the dataclass instance to a plain dict with `dataclasses.asdict()` and then pass that dict to `json.dumps()`. For example:\n\n```python\nimport json\nfrom dataclasses import dataclass, asdict\n\n@dataclass\nclass Point:\n    x: int\n    y: int\n\np = Point(10, 20)\njson_str = json.dumps(asdict(p))\nprint(json_str)  # -> {\"x\": 10, \"y\": 20}\n```\n\n`asdict` recursively turns nested dataclasses into dictionaries, which `json.dumps` can serialize. If you need custom handling (e.g., for non\u2011JSON\u2011serialisable fields), you can supply a `default` function to `json.dumps`.\n"
+    },
+    {
+      "case_id": "int-error",
+      "correctness": "correct",
+      "correctness_reasoning": "The answer correctly states that int() raises a ValueError for non-numeric strings, which matches the reference description.",
+      "cites_ok": true,
+      "checks_passed": 2,
+      "all_passed": true,
+      "response": "int() raises a ValueError when given a non\u2011numeric string.\n\nCitations: python-3.14-docs-html/builtins/exceptions.html",
+      "reference": "int() raises ValueError when the string is not a valid integer literal, e.g. int('abc'). builtins/functions.html#int says a string argument must represent an integer in the given radix (optional sign, whitespace, underscores between digits); builtins/exceptions.html defines ValueError as the exception for an argument of the right type but an inappropriate value."
+    },
+    {
+      "case_id": "json-indent",
+      "correctness": "incorrect",
+      "correctness_reasoning": "The provided answer text is empty and does not contain any information about the indent argument to json.dumps. It fails to state the key facts from the reference, thus it does not answer the question.",
+      "cites_ok": false,
+      "checks_passed": 0,
+      "all_passed": false,
+      "response": "\n\nCitations: (none)",
+      "reference": "The *indent* argument controls pretty\u2011printing of the JSON output. If you pass a non\u2011negative integer, each level of nesting is indented by that many spaces; if you pass a string (e.g., \"\\t\"), that string is used for each indentation level. An *indent* of 0, a negative number, or the empty string results in only newlines being inserted. The default value is ``None``, which produces the most compact representation (no extra whitespace)."
+    },
+    {
+      "case_id": "out-of-corpus-pricing",
+      "correctness": "correct",
+      "correctness_reasoning": "The reference indicates that the documents do not contain the OpenAI batch API pricing, so the appropriate response is to state that the information is unavailable. The answer correctly states that it could not find any information about the cost, aligning with the reference.",
+      "cites_ok": true,
+      "checks_passed": 2,
+      "all_passed": true,
+      "response": "I couldn't find any information in the provided documents about the cost of the OpenAI batch API per million tokens in 2026.\n\nCitations: (none)",
+      "reference": "The indexed documents (the CPython 3.14 manual and this project's notes) do not contain OpenAI batch API pricing, so the assistant should say it cannot answer rather than give a price."
+    },
+    {
+      "case_id": "project-serving",
+      "correctness": "incorrect",
+      "correctness_reasoning": "The provided answer text contains no information about the serving engine or the reasons for its selection, thus it fails to state the key facts from the reference. It does not answer the question.",
+      "cites_ok": false,
+      "checks_passed": 0,
+      "all_passed": false,
+      "response": "\n\nCitations: (none)",
+      "reference": "For self-hosted model serving the project uses vLLM (the `vllm` provider mode, next to the keyless `local` mode and hosted `openai`). serving.md gives the reasons: vLLM exposes an OpenAI-compatible API for serving open-source models such as Llama 3 or Mistral locally, and it raises throughput with paged attention (the KV cache is stored in non-contiguous pages, cutting memory fragmentation) and continuous batching (new requests join a running batch instead of waiting for it to finish)."
+    },
+    {
+      "case_id": "read-lines",
+      "correctness": "incorrect",
+      "correctness_reasoning": "The provided text between the markers is empty, so no answer is given. This fails to state the key facts from the reference about reading a file line by line, thus it is incorrect.",
+      "cites_ok": false,
+      "checks_passed": 0,
+      "all_passed": false,
+      "response": "\n\nCitations: (none)",
+      "reference": "Open the file (ideally with a `with open(...) as f:` block) and loop over the file object: `for line in f: print(line, end='')`. The tutorial calls this memory efficient, fast and simple. Alternatives: call f.readline() repeatedly (it returns '' at end of file, while a blank line is '\\n'), or read all lines into a list with list(f) or f.readlines()."
+    },
+    {
+      "case_id": "tz-convert",
+      "correctness": "incorrect",
+      "correctness_reasoning": "The provided answer text is empty, so it does not contain any of the key facts required to answer the question about building a timezone-aware datetime and converting it. Therefore it fails to answer the question and is incorrect.",
+      "cites_ok": false,
+      "checks_passed": 0,
+      "all_passed": false,
+      "response": "\n\nCitations: (none)",
+      "reference": "Attach a tzinfo when building the datetime: e.g. datetime(2020, 10, 31, 12, tzinfo=ZoneInfo(\"America/Los_Angeles\")) using zoneinfo.ZoneInfo (IANA zones), or datetime.timezone for a fixed offset such as timezone.utc; datetime.now(timezone.utc) gives an aware current time, and replace(tzinfo=...) labels a naive datetime without shifting the clock. Convert with aware_dt.astimezone(ZoneInfo(\"Europe/Paris\")): astimezone(tz) returns a datetime whose tzinfo is tz, adjusted so it represents the same UTC instant in tz's local time. Sources: library/datetime.html and library/zoneinfo.html ('Using ZoneInfo')."
+    }
+  ],
+  "golden_source_runs": [
+    "v3"
+  ]
+}

@@ -15,6 +15,7 @@ from __future__ import annotations
 import argparse
 import json
 import warnings
+from datetime import datetime, timezone
 
 import mlflow
 from mlflow import MlflowClient
@@ -56,13 +57,33 @@ def validate(model_uri: str, expected_f1: float) -> float:
     return f1
 
 
+TRANSITIONS_LOG = "registry_transitions.jsonl"
+
+
+def _log_transition(event: dict) -> None:
+    """MLflow keeps only a version's current stage, so every transition is also appended to an audit log."""
+    config.RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+    with open(config.RESULTS_DIR / TRANSITIONS_LOG, "a") as fh:
+        fh.write(json.dumps(event) + "\n")
+
+
 def promote(client: MlflowClient, version: str, stage: str, alias: str, reason: str) -> None:
-    client.transition_model_version_stage(
-        config.REGISTERED_MODEL_NAME, version, stage, archive_existing_versions=(stage == "Production")
-    )
-    client.set_registered_model_alias(config.REGISTERED_MODEL_NAME, alias, version)
-    client.set_model_version_tag(config.REGISTERED_MODEL_NAME, version, f"promoted_to_{stage.lower()}_because", reason)
-    print(f"  version {version} -> {stage} (@{alias}): {reason}")
+    name = config.REGISTERED_MODEL_NAME
+    from_stage = client.get_model_version(name, version).current_stage
+    displaced = [
+        mv.version for mv in client.get_latest_versions(name, stages=[stage]) if str(mv.version) != str(version)
+    ] if stage == "Production" else []
+    client.transition_model_version_stage(name, version, stage, archive_existing_versions=(stage == "Production"))
+    client.set_registered_model_alias(name, alias, version)
+    client.set_model_version_tag(name, version, f"promoted_to_{stage.lower()}_because", reason)
+    at = datetime.now(timezone.utc).isoformat(timespec="seconds")
+    _log_transition({"at": at, "version": int(version), "from": from_stage, "to": stage, "alias": alias, "reason": reason})
+    for old in displaced:
+        _log_transition({"at": at, "version": int(old), "from": "Production", "to": "Archived", "alias": None,
+                         "reason": f"archived automatically when version {version} was promoted to Production"})
+    print(f"  version {version}: {from_stage} -> {stage} (@{alias}): {reason}")
+    for old in displaced:
+        print(f"  version {old}: Production -> Archived")
 
 
 def export_registry(client: MlflowClient) -> dict:

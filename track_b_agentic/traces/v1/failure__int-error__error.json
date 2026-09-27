@@ -1,0 +1,124 @@
+{
+  "run_name": "v1",
+  "prompt_version": "v1",
+  "config": {
+    "prompt_version": "v1",
+    "prompt_file": "prompt_v1.txt",
+    "agent_mode": "single",
+    "provider": "groq",
+    "model": "openai/gpt-oss-120b",
+    "temperature": 0.2,
+    "top_p": 0.9,
+    "top_k": 4,
+    "max_iterations": 4,
+    "reasoning_effort": "low",
+    "note": "W15 single-loop system prompt, verbatim from app/llm.py (SYSTEM_PROMPT). Baseline."
+  },
+  "case": {
+    "id": "int-error",
+    "kind": "single_hop",
+    "question": "Which exception does int() raise when given a non-numeric string?",
+    "expect_documents": [
+      "builtins/functions.html",
+      "builtins/exceptions.html",
+      "library/exceptions.html"
+    ],
+    "expect_tools": [
+      "search_knowledge_base"
+    ],
+    "forbid_tools": [],
+    "must_include": [
+      "ValueError"
+    ],
+    "expect_decline": false
+  },
+  "prefetched_context": [
+    {
+      "document": "python-3.14-docs-html/builtins/exceptions.html",
+      "anchor": "concrete-exceptions",
+      "section": "Built-in Exceptions > Concrete exceptions",
+      "score": 0.7685,
+      "text": "the constructor. (Defaults to None .)\nexception TypeError Raised when an operation or function is applied to an object of inappropriate type. The associated value is a string giving details about the type mismatch. This exception may be raised by user code to indicate that an attempted operation on an object is not supported, and is not meant to be. If an object is meant to support a given operation but has not yet provided an implementation, NotImplementedError is the proper exception to raise. Passing arguments of the wrong type (e.g. passing a list when an int is expected) should result in a TypeError , but passing arguments with the wrong value (e.g. a number outside expected boundaries) should result in a ValueError .\nexception UnboundLocalError Raised when a reference is made to a local variable in a function or method, but no value has been bound to that variable. This is a subclass of NameError .\nexception UnicodeError Raised when a Unicode-related encoding or decoding error occurs. It is a subclass of ValueError . UnicodeError has"
+    },
+    {
+      "document": "python-3.14-docs-html/whatsnew/3.11.html",
+      "anchor": "other-cpython-implementation-changes",
+      "section": "What’s New In Python 3.11 > Other CPython Implementation Changes",
+      "score": 0.7585,
+      "text": "now available using the respective --help-env and --help-xoptions flags, and with the new --help-all . (Contributed by Éric Araujo in bpo-46142 .) Converting between int and str in bases other than 2 (binary), 4, 8 (octal), 16 (hexadecimal), or 32 such as base 10 (decimal) now raises a ValueError if the number of digits in string form is above a limit to avoid potential denial of service attacks due to the algorithmic complexity. This is a mitigation for CVE 2020-10735 . This limit can be configured or disabled by environment variable, command line flag, or sys APIs. See the integer string conversion length limitation documentation. The default limit is 4300 digits in string form."
+    },
+    {
+      "document": "python-3.14-docs-html/builtins/stdtypes.html",
+      "anchor": "affected-apis",
+      "section": "Built-in Types > Integer string conversion length limitation > Affected APIs",
+      "score": 0.7582,
+      "text": "Built-in Types > Integer string conversion length limitation > Affected APIs\nThe limitation only applies to potentially slow conversions between int and str or bytes :\nint(string) with default base 10. int(string, base) for all bases that are not a power of 2. str(integer) . repr(integer) . any other string conversion to base 10, for example f\"{integer}\" , \"{}\".format(integer) , or b\"%d\" % integer .\nThe limitations do not apply to functions with a linear algorithm:\nint(string, base) with base 2, 4, 8, 16, or 32. int.from_bytes() and int.to_bytes() . hex() , oct() , bin() . Format specification mini-language for hex, octal, and binary numbers. str to float . str to decimal.Decimal ."
+    },
+    {
+      "document": "python-3.14-docs-html/library/unicodedata.html",
+      "anchor": "module-unicodedata",
+      "section": "unicodedata — Unicode Database",
+      "score": 0.7542,
+      "text": "not given, ValueError is raised: ``` >>> unicodedata.digit('\\N{SUPERSCRIPT NINE}') 9 ```\nunicodedata.numeric(chr, default=None, /) Returns the numeric value assigned to the character chr as float. If no such value is defined, default is returned, or, if not given, ValueError is raised: ``` >>> unicodedata.numeric('½') 0.5 ```\nunicodedata.category(chr) Returns the general category assigned to the character chr as string. General category names consist of two letters. See the General Category Values section of the Unicode Character Database documentation for a list of category codes. For example: ``` >>> unicodedata.category('A') # 'L'etter, 'u'ppercase 'Lu' ```\nunicodedata.bidirectional(chr) Returns the bidirectional class assigned to the character chr as string. If no such value is defined, an empty string is returned. See the Bidirectional Class Values section of the Unicode Character Database documentation for a list of bidirectional codes. For example: ``` >>> unicodedata.bidirectional('\\N{ARABIC-INDIC DIGIT SEVEN}') # 'A'rabic, 'N'umber 'AN' ```\nunicodedata.combining(chr) Returns the canonical combining class assigned to the character chr as integer. Returns 0 if no combining class is defined. See the Canonical Combining Class Values section of the"
+    }
+  ],
+  "steps": [
+    {
+      "step": 1,
+      "agent": "agent",
+      "decision": "error",
+      "error": "RuntimeError: groq request failed after 1 attempt(s): Error code: 400 - {'error': {'message': \"Tool call validation failed: tool call validation failed: attempted to call tool 'json' which was not in request.tools\", 'type': 'invalid_request_error', 'code': 'tool_use_failed', 'failed_generation': '{\"name\": \"json\", \"arguments\": {\\n  \"answer\": \"int() raises a ValueError when it is given a non‑numeric string.\",\\n  \"confidence\": 0.99,\\n  \"citations\": [\\n    \"python-3.14-docs-html/builtins/stdtypes.html\",\\n    \"python-3.14-docs-html/builtins/exceptions.html\"\\n  ]\\n}}'}}",
+      "tool_calls": [],
+      "reasoning": "",
+      "content": ""
+    }
+  ],
+  "iterations": 0,
+  "termination": "error",
+  "error": "AgentRunError: RuntimeError: groq request failed after 1 attempt(s): Error code: 400 - {'error': {'message': \"Tool call validation failed: tool call validation failed: attempted to call tool 'json' which was not in request.tools\", 'type': 'invalid_request_error', 'code': 'tool_use_failed', 'failed_generation': '{\"name\": \"json\", \"arguments\": {\\n  \"answer\": \"int() raises a ValueError when it is given a non‑numeric string.\",\\n  \"confidence\": 0.99,\\n  \"citations\": [\\n    \"python-3.14-docs-html/builtins/stdtypes.html\",\\n    \"python-3.14-docs-html/builtins/exceptions.html\"\\n  ]\\n}}'}}",
+  "final": {
+    "answer": "",
+    "confidence": 0.0,
+    "citations": [],
+    "agent_mode": "single"
+  },
+  "usage": {
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "total_tokens": 0,
+    "model_calls": 0,
+    "wait_ms": 0
+  },
+  "latency_ms": 807,
+  "latency_net_ms": 807,
+  "cost_usd": 0.0,
+  "harness": {
+    "case_id": "int-error",
+    "kind": "single_hop",
+    "mode": "single",
+    "fault": "none",
+    "agent_mode": "",
+    "answered": false,
+    "completed": false,
+    "grounded": false,
+    "declined": false,
+    "tools_correct": false,
+    "tools_called": [],
+    "argument_problems": [],
+    "tool_errors": [],
+    "retrieval_broke": false,
+    "documents": [],
+    "matched_documents": [],
+    "iterations": 0,
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "total_tokens": 0,
+    "model_calls": 0,
+    "latency_ms": 807,
+    "confidence": 0.0,
+    "researchers": 0,
+    "failure": "hard",
+    "reason": "the run raised: AgentRunError: RuntimeError: groq request failed after 1 attempt(s): Error code: 400 - {'error': {'message': \"Tool call validation failed: tool call validation failed: attempted to call tool 'json' which was not in request.tools\", 'type': 'invalid_request_error', 'code': 'tool_use_failed', 'failed_generation': '{\"name\": \"json\", \"arguments\": {\\n  \"answer\": \"int() raises a ValueError when it is given a non‑numeric string.\",\\n  \"confidence\": 0.99,\\n  \"citations\": [\\n    \"python-3.14-docs-html/builtins/stdtypes.html\",\\n    \"python-3.14-docs-html/builtins/exceptions.html\"\\n  ]\\n}}'}}",
+    "answer": ""
+  }
+}

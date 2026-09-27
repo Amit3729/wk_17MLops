@@ -14,8 +14,9 @@ data.py  train.py   MLflow      register.py serve.py   drift.py      pipeline.py
 | Deliverable | Where |
 | --- | --- |
 | `pyproject.toml` + `uv.lock` | [pyproject.toml](pyproject.toml), [uv.lock](uv.lock) |
-| Run comparison, all 6 runs | [results/runs_comparison.md](results/runs_comparison.md) (+ [.csv](results/runs_comparison.csv), [chart](results/runs_comparison.png)), [MLflow UI screenshot](results/screenshots/mlflow_compare_runs.png) |
-| Registry and stage transitions | [results/model_registry.json](results/model_registry.json), [registry screenshot](results/screenshots/mlflow_model_registry.png), [v1](results/screenshots/mlflow_model_version_1.png) / [v2](results/screenshots/mlflow_model_version_2.png) |
+| Run comparison, all 6 runs | [results/runs_comparison.md](results/runs_comparison.md) (+ [.csv](results/runs_comparison.csv), [chart](results/runs_comparison.png)); MLflow UI: [hold-out metric charts](results/screenshots/mlflow_runs_charts.png), [compare-runs page](results/screenshots/mlflow_compare_runs.png) |
+| Registry and stage transitions | [results/registry_transitions.jsonl](results/registry_transitions.jsonl) (timestamped audit log of every transition), [results/model_registry.json](results/model_registry.json), [registry screenshot](results/screenshots/mlflow_model_registry.png), [v1](results/screenshots/mlflow_model_version_1.png) / [v2](results/screenshots/mlflow_model_version_2.png) |
+| Evidently reports saved in MLflow | [screenshot](results/screenshots/mlflow_monitoring_evidently_artifact.png): run `drift-check-drifted` → Artifacts → `evidently_reports/data_drift_report.html`, rendered in the MLflow UI |
 | Evidently HTML reports | [reports/](reports/): data drift, target drift + custom metrics, model performance (drifted and control) |
 | Drift interpretation data | [results/drift_summary.json](results/drift_summary.json), [results/drift_summary_control.json](results/drift_summary_control.json) |
 | Retraining outcome | [results/retraining_result.json](results/retraining_result.json) |
@@ -29,17 +30,14 @@ data.py  train.py   MLflow      register.py serve.py   drift.py      pipeline.py
 git clone -b track-a-data-science https://github.com/Amit3729/wk_17MLops.git
 cd wk_17MLops/track_a_churn
 
-# Option 1: conda env managed by uv (how this project was developed)
-conda create -n mlops python=3.12 -y && conda activate mlops
-export UV_PROJECT_ENVIRONMENT="$CONDA_PREFIX"
-uv sync --frozen --inexact     # --inexact leaves conda's own pip/setuptools installed
-
-# Option 2: no conda, uv creates .venv
-uv sync --frozen
-
+uv sync --frozen               # creates .venv with Python 3.12 and the exact locked versions
 uv run churn-pipeline          # the whole workflow, ~40 s on a laptop
 uv run pytest                  # 11 tests
 ```
+
+The only prerequisite is [uv](https://docs.astral.sh/uv/getting-started/installation/). If
+Python 3.12 isn't installed, uv downloads it (pinned in `.python-version`). All commands go
+through `uv run`, so there's no environment to activate.
 
 `churn-pipeline` downloads the CSV (and checks its SHA-256), trains six models, registers
 the best one, exports the comparison, runs the drift checks, and retrains because drift is
@@ -83,7 +81,7 @@ and reports which registry version is serving. To serve the Staging model instea
 
 ```
 track_a_churn/
-├── pyproject.toml, uv.lock, .python-version   # locked env (Python 3.12)
+├── pyproject.toml, uv.lock, .python-version   # locked env (Python 3.12); `uv sync` builds .venv
 ├── src/churn/
 │   ├── config.py               # paths, seeds, thresholds: every number quoted below lives here
 │   ├── data.py                 # download + checksum, cleaning, 70/30 split, drift injection
@@ -139,7 +137,7 @@ registered v1, and passed all 11 tests. `--frozen` makes uv fail instead of sile
 re-resolving if `uv.lock` and `pyproject.toml` ever drift apart.
 
 Airflow is an opt-in group, so the default environment stays lean:
-`uv sync --inexact --group airflow` (see section d).
+`uv sync --group airflow` (see section d).
 
 ---
 
@@ -171,6 +169,9 @@ whether the 2.8:1 class imbalance is corrected), not just the seed:
   (train − test ROC-AUC); fit time; and prediction latency per 1,000 rows.
 - *Artifacts*: the model (with signature and input example), `confusion_matrix.png`,
   `roc_curve.png`, `pr_curve.png`, `classification_report.json` and `feature_importance.csv`.
+  In MLflow 3 the model is a *logged model* linked to its run, so in the UI it appears in the
+  run's **Models** column and "Logged models" section (URI stored in the run tag `model_uri`),
+  while the plots are under the run's Artifacts → `evaluation/`.
 - *Tags*: model family and a one-line rationale for the configuration.
 
 **Selection rule, fixed before looking at the results:** highest hold-out **F1 on the churn
@@ -180,8 +181,10 @@ Accuracy is therefore reported but never used to choose a model.
 
 ### Results: all six runs
 
-Exported from MLflow by `churn-compare` ([csv](results/runs_comparison.csv),
-[MLflow UI](results/screenshots/mlflow_compare_runs.png)). Bold marks the best value in each column.
+Exported from MLflow by `churn-compare` ([csv](results/runs_comparison.csv)). Bold marks the
+best value in each column. The same numbers in the MLflow UI:
+
+![MLflow UI: hold-out metrics for all six runs](results/screenshots/mlflow_runs_charts.png)
 
 | Run | Accuracy | Precision | Recall | **F1** | **ROC-AUC** | PR-AUC | CV ROC-AUC | CV F1 | Overfit gap | Fit (s) | ms / 1k rows |
 |---|---|---|---|---|---|---|---|---|---|---|---|
@@ -221,7 +224,9 @@ expensive, the decision threshold (currently 0.5) is the setting to tune, not th
 ### Registry and stage transitions
 
 `churn-register` carries out the transitions with gates, and records the reason for each one as a
-model-version tag (visible in the [v1 screenshot](results/screenshots/mlflow_model_version_1.png)):
+model-version tag (visible in the [v1 screenshot](results/screenshots/mlflow_model_version_1.png)).
+MLflow stores only a version's *current* stage, so each transition is also appended, with a
+timestamp, to [results/registry_transitions.jsonl](results/registry_transitions.jsonl):
 
 | Version | Source run | Transitions | Gate |
 | --- | --- | --- | --- |
@@ -346,7 +351,7 @@ real system, a label-drift signal this large would also be a reason to audit how
 being recorded, not just to retrain.
 
 Each drift check is logged to the MLflow experiment `telco-churn-monitoring`, with the three HTML
-reports as artifacts (`evidently_reports/`), per-column drift scores, custom-metric values, model
+reports as artifacts (`evidently_reports/`, [screenshot](results/screenshots/mlflow_monitoring_evidently_artifact.png)), per-column drift scores, custom-metric values, model
 quality and a `retrain_recommended` flag. So the history of drift checks sits next to the training
 runs.
 
@@ -381,7 +386,7 @@ same test with `current_path=data/current_clean.csv` took the `no_drift_detected
 skipped retraining.
 
 ```bash
-uv sync --inexact --group airflow
+uv sync --group airflow
 export AIRFLOW_HOME=$PWD/.airflow AIRFLOW__CORE__DAGS_FOLDER=$PWD/dags AIRFLOW__CORE__LOAD_EXAMPLES=False
 uv run airflow db migrate
 uv run airflow dags test telco_churn_drift_monitoring 2026-09-28                    # drift -> retrain

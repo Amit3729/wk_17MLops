@@ -1,0 +1,190 @@
+{
+  "run_name": "v4",
+  "prompt_version": "v4",
+  "config": {
+    "prompt_version": "v4",
+    "prompt_file": "prompt_v4.txt",
+    "agent_mode": "single",
+    "provider": "groq",
+    "model": "openai/gpt-oss-120b",
+    "temperature": 0.2,
+    "top_p": 0.9,
+    "top_k": 3,
+    "max_iterations": 3,
+    "reasoning_effort": "low",
+    "recover_tool_answers": true,
+    "note": "Cost cut after the golden set was frozen. v3 traces: every search asked for top_k 5 and the loop also pre-retrieved top_k 4 chunks, so json-indent spent 5,245 prompt tokens for 2 turns on json.html chunks it already had; max 3 turns were ever used of 4. v4: pre-retrieval top_k 4->3, prompt asks for top_k 3 per search and short answers, max_iterations 4->3."
+  },
+  "case": {
+    "id": "dataclass-json",
+    "kind": "multi_hop",
+    "question": "How do I serialise a dataclass to JSON?",
+    "expect_documents": [
+      "library/dataclasses.html",
+      "library/json.html"
+    ],
+    "expect_tools": [
+      "search_knowledge_base"
+    ],
+    "forbid_tools": [],
+    "must_include": [],
+    "expect_decline": false
+  },
+  "prefetched_context": [
+    {
+      "document": "python-3.14-docs-html/library/json.html",
+      "anchor": "module-json",
+      "section": "json — JSON encoder and decoder",
+      "score": 0.7847,
+      "text": "... raise TypeError(f'Cannot serialize object of {type(obj)}') ... >>> json.dumps(1 + 2j, default=custom_json) '{\"__complex__\": true, \"real\": 1.0, \"imag\": 2.0}' ```\nDecoding JSON:\n``` >>> import json >>> json.loads('[\"foo\", {\"bar\":[\"baz\", null, 1.0, 2]}]') ['foo', {'bar': ['baz', None, 1.0, 2]}] >>> json.loads('\"\\\\\"foo\\\\bar\"') '\"foo\\x08ar' >>> from io import StringIO >>> io = StringIO('[\"streaming API\"]') >>> json.load(io) ['streaming API'] ```\nCustomizing JSON object decoding:\n``` >>> import json >>> def as_complex(dct): ... if '__complex__' in dct: ... return complex(dct['real'], dct['imag']) ... return dct ... >>> json.loads('{\"__complex__\": true, \"real\": 1, \"imag\": 2}', ... object_hook=as_complex) (1+2j) >>> import decimal >>> json.loads('1.1', parse_float=decimal.Decimal) Decimal('1.1') ```\nExtending JSONEncoder :\n``` >>> import json >>> class ComplexEncoder(json.JSONEncoder): ... def default(self, obj): ... if isinstance(obj, complex): ... return [obj.real, obj.imag] ... # Let the base class default method raise the TypeError ... return super().default(obj) ... >>> json.dumps(2 + 1j, cls=ComplexEncoder) '[2.0, 1.0]' >>> ComplexEncoder().encode(2 + 1j) '[2.0, 1.0]' >>> list(ComplexEncoder().iterencode(2 + 1j)) ['[2.0', ', 1.0', ']'] ```\nUsing json from the shell to validate and pretty-print:\n``` $ echo '{\"json\":\"obj\"}' | python"
+    },
+    {
+      "document": "python-3.14-docs-html/library/dataclasses.html",
+      "anchor": "module-contents",
+      "section": "dataclasses — Data Classes > Module contents",
+      "score": 0.7399,
+      "text": "pseudo-fields which are ClassVar or InitVar .\ndataclasses.asdict(obj, *, dict_factory=dict) Converts the dataclass obj to a dict (by using the factory function dict_factory ). Each dataclass is converted to a dict of its fields, as name: value pairs. dataclasses, dicts, lists, and tuples are recursed into. Other objects are copied with copy.deepcopy() . Example of using asdict() on nested dataclasses: ``` @dataclass class Point: x: int y: int\n@dataclass class C: mylist: list[Point]\np = Point(10, 20) assert asdict(p) == {'x': 10, 'y': 20}\nc = C([Point(0, 0), Point(10, 4)]) assert asdict(c) == {'mylist': [{'x': 0, 'y': 0}, {'x': 10, 'y': 4}]} ``` To create a shallow copy, the following workaround may be used: ``` {field.name: getattr(obj, field.name) for field in fields(obj)} ``` asdict() raises TypeError if obj is not a dataclass instance.\ndataclasses.astuple(obj, *, tuple_factory=tuple) Converts the dataclass obj to a tuple (by using the factory function tuple_factory ). Each dataclass is converted to a tuple of its field values. dataclasses, dicts, lists, and tuples are recursed into. Other objects are copied with copy.deepcopy()"
+    },
+    {
+      "document": "python-3.14-docs-html/library/json.html",
+      "anchor": "module-json",
+      "section": "json — JSON encoder and decoder",
+      "score": 0.7369,
+      "text": "... >>> json.dumps(2 + 1j, cls=ComplexEncoder) '[2.0, 1.0]' >>> ComplexEncoder().encode(2 + 1j) '[2.0, 1.0]' >>> list(ComplexEncoder().iterencode(2 + 1j)) ['[2.0', ', 1.0', ']'] ```\nUsing json from the shell to validate and pretty-print:\n``` $ echo '{\"json\":\"obj\"}' | python -m json { \"json\": \"obj\" } $ echo '{1.2:3.4}' | python -m json Expecting property name enclosed in double quotes: line 1 column 2 (char 1) ```\nSee Command-line interface for detailed documentation.\nNote\nJSON is a subset of YAML 1.2. The JSON produced by this module’s default settings (in particular, the default separators value) is also a subset of YAML 1.0 and 1.1. This module can thus also be used as a YAML serializer.\nNote\nThis module’s encoders and decoders preserve input and output order by default. Order is only lost if the underlying containers are unordered."
+    }
+  ],
+  "steps": [
+    {
+      "step": 1,
+      "agent": "agent",
+      "decision": "call_tools",
+      "tools_offered": true,
+      "reasoning": "Need to search for dataclass JSON serialization.",
+      "recovered_from": "",
+      "content": "",
+      "tool_calls": [
+        {
+          "name": "search_knowledge_base",
+          "arguments": {
+            "query": "dataclass json serialization json.dumps dataclasses.asdict",
+            "source": "python-3.14-docs-html",
+            "top_k": 3
+          },
+          "result": {
+            "query": "dataclass json serialization json.dumps dataclasses.asdict",
+            "matches": [
+              {
+                "document": "python-3.14-docs-html/library/dataclasses.html",
+                "chunk_id": 16,
+                "score": 0.8036,
+                "text": "pseudo-fields which are ClassVar or InitVar .\ndataclasses.asdict(obj, *, dict_factory=dict) Converts the dataclass obj to a dict (by using the factory function dict_factory ). Each dataclass is converted to a dict of its fields, as name: value pairs. dataclasses, dicts, lists, and tuples are recursed into. Other objects are copied with copy.deepcopy() . Example of using asdict() on nested dataclasses: ``` @dataclass class Point: x: int y: int\n@dataclass class C: mylist: list[Point]\np = Point(10, 20) assert asdict(p) == {'x': 10, 'y': 20}\nc = C([Point(0, 0), Point(10, 4)]) assert asdict(c) == {'mylist': [{'x': 0, 'y': 0}, {'x': 10, 'y': 4}]} ``` To create a shallow copy, the following workaround may be used: ``` {field.name: getattr(obj, field.name) for field in fields(obj)} ``` asdict() raises TypeError if obj is not a dataclass instance.\ndataclasses.astuple(obj, *, tuple_factory=tuple) Converts the dataclass obj to a tuple (by using the factory function tuple_factory ). Each dataclass is converted to a tuple of its field values. dataclasses, dicts, lists, and tuples are recursed into. Other objects are copied with copy.deepcopy()",
+                "title": "dataclasses — Data Classes",
+                "section": "dataclasses — Data Classes > Module contents",
+                "anchor": "module-contents",
+                "source": "python-3.14-docs-html"
+              },
+              {
+                "document": "python-3.14-docs-html/library/collections.html",
+                "chunk_id": 46,
+                "score": 0.7599,
+                "text": "collections — Container datatypes > UserDict objects\nThe class, UserDict acts as a wrapper around dictionary objects. The need for this class has been partially supplanted by the ability to subclass directly from dict ; however, this class can be easier to work with because the underlying dictionary is accessible as an attribute.\nclass collections.UserDict(**kwargs) class collections.UserDict(mapping, /, **kwargs) class collections.UserDict(iterable, /, **kwargs) Class that simulates a dictionary. The instance’s contents are kept in a regular dictionary, which is accessible via the data attribute of UserDict instances. If arguments are provided, they are used to initialize data , like a regular dictionary. In addition to supporting the methods and operations of mappings, UserDict instances provide the following attribute: data A real dictionary used to store the contents of the UserDict class.",
+                "title": "collections — Container datatypes",
+                "section": "collections — Container datatypes > UserDict objects",
+                "anchor": "userdict-objects",
+                "source": "python-3.14-docs-html"
+              },
+              {
+                "document": "python-3.14-docs-html/library/json.html",
+                "chunk_id": 2,
+                "score": 0.7527,
+                "text": "... raise TypeError(f'Cannot serialize object of {type(obj)}') ... >>> json.dumps(1 + 2j, default=custom_json) '{\"__complex__\": true, \"real\": 1.0, \"imag\": 2.0}' ```\nDecoding JSON:\n``` >>> import json >>> json.loads('[\"foo\", {\"bar\":[\"baz\", null, 1.0, 2]}]') ['foo', {'bar': ['baz', None, 1.0, 2]}] >>> json.loads('\"\\\\\"foo\\\\bar\"') '\"foo\\x08ar' >>> from io import StringIO >>> io = StringIO('[\"streaming API\"]') >>> json.load(io) ['streaming API'] ```\nCustomizing JSON object decoding:\n``` >>> import json >>> def as_complex(dct): ... if '__complex__' in dct: ... return complex(dct['real'], dct['imag']) ... return dct ... >>> json.loads('{\"__complex__\": true, \"real\": 1, \"imag\": 2}', ... object_hook=as_complex) (1+2j) >>> import decimal >>> json.loads('1.1', parse_float=decimal.Decimal) Decimal('1.1') ```\nExtending JSONEncoder :\n``` >>> import json >>> class ComplexEncoder(json.JSONEncoder): ... def default(self, obj): ... if isinstance(obj, complex): ... return [obj.real, obj.imag] ... # Let the base class default method raise the TypeError ... return super().default(obj) ... >>> json.dumps(2 + 1j, cls=ComplexEncoder) '[2.0, 1.0]' >>> ComplexEncoder().encode(2 + 1j) '[2.0, 1.0]' >>> list(ComplexEncoder().iterencode(2 + 1j)) ['[2.0', ', 1.0', ']'] ```\nUsing json from the shell to validate and pretty-print:\n``` $ echo '{\"json\":\"obj\"}' | python",
+                "title": "json — JSON encoder and decoder",
+                "section": "json — JSON encoder and decoder",
+                "anchor": "module-json",
+                "source": "python-3.14-docs-html"
+              }
+            ]
+          }
+        }
+      ],
+      "prompt_tokens": 1813,
+      "completion_tokens": 70,
+      "model_calls": 1,
+      "latency_ms": 597
+    },
+    {
+      "step": 2,
+      "agent": "agent",
+      "decision": "final_answer",
+      "tools_offered": true,
+      "reasoning": "",
+      "recovered_from": "tool_use_failed: pseudo-tool 'json'",
+      "content": "{\"answer\": \"Convert the dataclass to a plain dict with `dataclasses.asdict()` and then pass that dict to `json.dumps()`. Example:\\n```python\\nfrom dataclasses import dataclass, asdict\\nimport json\\n\\n@dataclass\\nclass Point:\\n    x: int\\n    y: int\\n\\np = Point(1, 2)\\njson_str = json.dumps(asdict(p))\\nprint(json_str)  # {\\\"x\\\": 1, \\\"y\\\": 2}\\n```\", \"confidence\": 0.97, \"citations\": [\"python-3.14-docs-html/library/dataclasses.html\", \"python-3.14-docs-html/library/json.html\"]}",
+      "tool_calls": [],
+      "prompt_tokens": 0,
+      "completion_tokens": 0,
+      "model_calls": 1,
+      "latency_ms": 49258
+    }
+  ],
+  "iterations": 2,
+  "termination": "success",
+  "error": "",
+  "final": {
+    "answer": "Convert the dataclass to a plain dict with `dataclasses.asdict()` and then pass that dict to `json.dumps()`. Example:\n```python\nfrom dataclasses import dataclass, asdict\nimport json\n\n@dataclass\nclass Point:\n    x: int\n    y: int\n\np = Point(1, 2)\njson_str = json.dumps(asdict(p))\nprint(json_str)  # {\"x\": 1, \"y\": 2}\n```",
+    "confidence": 0.97,
+    "citations": [
+      "python-3.14-docs-html/library/dataclasses.html",
+      "python-3.14-docs-html/library/json.html"
+    ],
+    "agent_mode": "single"
+  },
+  "usage": {
+    "prompt_tokens": 1813,
+    "completion_tokens": 70,
+    "total_tokens": 1883,
+    "model_calls": 2,
+    "wait_ms": 48130
+  },
+  "latency_ms": 49877,
+  "latency_net_ms": 1747,
+  "cost_usd": 0.00031394999999999996,
+  "harness": {
+    "case_id": "dataclass-json",
+    "kind": "multi_hop",
+    "mode": "single",
+    "fault": "none",
+    "agent_mode": "single",
+    "answered": true,
+    "completed": true,
+    "grounded": true,
+    "declined": false,
+    "tools_correct": true,
+    "tools_called": [
+      "search_knowledge_base"
+    ],
+    "argument_problems": [],
+    "tool_errors": [],
+    "retrieval_broke": false,
+    "documents": [
+      "python-3.14-docs-html/library/collections.html",
+      "python-3.14-docs-html/library/dataclasses.html",
+      "python-3.14-docs-html/library/json.html"
+    ],
+    "matched_documents": [
+      "library/dataclasses.html",
+      "library/json.html"
+    ],
+    "iterations": 2,
+    "prompt_tokens": 1813,
+    "completion_tokens": 70,
+    "total_tokens": 1883,
+    "model_calls": 2,
+    "latency_ms": 49877,
+    "confidence": 0.97,
+    "researchers": 0,
+    "failure": "",
+    "reason": "",
+    "answer": "Convert the dataclass to a plain dict with `dataclasses.asdict()` and then pass that dict to `json.dumps()`. Example:\n```python\nfrom dataclasses import dataclass, asdict\nimport json\n\n@dataclass\nclass Point:\n    x: int\n    y: int\n\np = Point(1, 2)\njson_str = json.dumps(asdict(p))\nprint(json_str)  # {\"x\": 1, \"y\": 2}\n```"
+  }
+}

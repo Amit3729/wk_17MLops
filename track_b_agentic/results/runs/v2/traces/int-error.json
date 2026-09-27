@@ -1,0 +1,378 @@
+{
+  "run_name": "v2",
+  "prompt_version": "v2",
+  "config": {
+    "prompt_version": "v2",
+    "prompt_file": "prompt_v2.txt",
+    "agent_mode": "single",
+    "provider": "groq",
+    "model": "openai/gpt-oss-120b",
+    "temperature": 0.2,
+    "top_p": 0.9,
+    "top_k": 4,
+    "max_iterations": 4,
+    "reasoning_effort": "low",
+    "note": "v1 + an explicit answer-delivery rule. Targets v1's only failure: 8/8 runs ended in HTTP 400 tool_use_failed because gpt-oss wrapped its final JSON in a call to a non-existent tool named 'json'. Config unchanged so the prompt is the only variable."
+  },
+  "case": {
+    "id": "int-error",
+    "kind": "single_hop",
+    "question": "Which exception does int() raise when given a non-numeric string?",
+    "expect_documents": [
+      "builtins/functions.html",
+      "builtins/exceptions.html",
+      "library/exceptions.html"
+    ],
+    "expect_tools": [
+      "search_knowledge_base"
+    ],
+    "forbid_tools": [],
+    "must_include": [
+      "ValueError"
+    ],
+    "expect_decline": false
+  },
+  "prefetched_context": [
+    {
+      "document": "python-3.14-docs-html/builtins/exceptions.html",
+      "anchor": "concrete-exceptions",
+      "section": "Built-in Exceptions > Concrete exceptions",
+      "score": 0.7685,
+      "text": "the constructor. (Defaults to None .)\nexception TypeError Raised when an operation or function is applied to an object of inappropriate type. The associated value is a string giving details about the type mismatch. This exception may be raised by user code to indicate that an attempted operation on an object is not supported, and is not meant to be. If an object is meant to support a given operation but has not yet provided an implementation, NotImplementedError is the proper exception to raise. Passing arguments of the wrong type (e.g. passing a list when an int is expected) should result in a TypeError , but passing arguments with the wrong value (e.g. a number outside expected boundaries) should result in a ValueError .\nexception UnboundLocalError Raised when a reference is made to a local variable in a function or method, but no value has been bound to that variable. This is a subclass of NameError .\nexception UnicodeError Raised when a Unicode-related encoding or decoding error occurs. It is a subclass of ValueError . UnicodeError has"
+    },
+    {
+      "document": "python-3.14-docs-html/whatsnew/3.11.html",
+      "anchor": "other-cpython-implementation-changes",
+      "section": "What’s New In Python 3.11 > Other CPython Implementation Changes",
+      "score": 0.7585,
+      "text": "now available using the respective --help-env and --help-xoptions flags, and with the new --help-all . (Contributed by Éric Araujo in bpo-46142 .) Converting between int and str in bases other than 2 (binary), 4, 8 (octal), 16 (hexadecimal), or 32 such as base 10 (decimal) now raises a ValueError if the number of digits in string form is above a limit to avoid potential denial of service attacks due to the algorithmic complexity. This is a mitigation for CVE 2020-10735 . This limit can be configured or disabled by environment variable, command line flag, or sys APIs. See the integer string conversion length limitation documentation. The default limit is 4300 digits in string form."
+    },
+    {
+      "document": "python-3.14-docs-html/builtins/stdtypes.html",
+      "anchor": "affected-apis",
+      "section": "Built-in Types > Integer string conversion length limitation > Affected APIs",
+      "score": 0.7582,
+      "text": "Built-in Types > Integer string conversion length limitation > Affected APIs\nThe limitation only applies to potentially slow conversions between int and str or bytes :\nint(string) with default base 10. int(string, base) for all bases that are not a power of 2. str(integer) . repr(integer) . any other string conversion to base 10, for example f\"{integer}\" , \"{}\".format(integer) , or b\"%d\" % integer .\nThe limitations do not apply to functions with a linear algorithm:\nint(string, base) with base 2, 4, 8, 16, or 32. int.from_bytes() and int.to_bytes() . hex() , oct() , bin() . Format specification mini-language for hex, octal, and binary numbers. str to float . str to decimal.Decimal ."
+    },
+    {
+      "document": "python-3.14-docs-html/library/unicodedata.html",
+      "anchor": "module-unicodedata",
+      "section": "unicodedata — Unicode Database",
+      "score": 0.7542,
+      "text": "not given, ValueError is raised: ``` >>> unicodedata.digit('\\N{SUPERSCRIPT NINE}') 9 ```\nunicodedata.numeric(chr, default=None, /) Returns the numeric value assigned to the character chr as float. If no such value is defined, default is returned, or, if not given, ValueError is raised: ``` >>> unicodedata.numeric('½') 0.5 ```\nunicodedata.category(chr) Returns the general category assigned to the character chr as string. General category names consist of two letters. See the General Category Values section of the Unicode Character Database documentation for a list of category codes. For example: ``` >>> unicodedata.category('A') # 'L'etter, 'u'ppercase 'Lu' ```\nunicodedata.bidirectional(chr) Returns the bidirectional class assigned to the character chr as string. If no such value is defined, an empty string is returned. See the Bidirectional Class Values section of the Unicode Character Database documentation for a list of bidirectional codes. For example: ``` >>> unicodedata.bidirectional('\\N{ARABIC-INDIC DIGIT SEVEN}') # 'A'rabic, 'N'umber 'AN' ```\nunicodedata.combining(chr) Returns the canonical combining class assigned to the character chr as integer. Returns 0 if no combining class is defined. See the Canonical Combining Class Values section of the"
+    }
+  ],
+  "steps": [
+    {
+      "step": 1,
+      "agent": "agent",
+      "decision": "call_tools",
+      "tools_offered": true,
+      "reasoning": "We need answer: ValueError. Cite docs. Use provided context where int(string) raises ValueError. Search maybe.",
+      "content": "",
+      "tool_calls": [
+        {
+          "name": "search_knowledge_base",
+          "arguments": {
+            "query": "int() raises ValueError non-numeric string",
+            "source": "python-3.14-docs-html",
+            "top_k": 5
+          },
+          "result": {
+            "query": "int() raises ValueError non-numeric string",
+            "matches": [
+              {
+                "document": "python-3.14-docs-html/whatsnew/3.11.html",
+                "chunk_id": 23,
+                "score": 0.7675,
+                "text": "now available using the respective --help-env and --help-xoptions flags, and with the new --help-all . (Contributed by Éric Araujo in bpo-46142 .) Converting between int and str in bases other than 2 (binary), 4, 8 (octal), 16 (hexadecimal), or 32 such as base 10 (decimal) now raises a ValueError if the number of digits in string form is above a limit to avoid potential denial of service attacks due to the algorithmic complexity. This is a mitigation for CVE 2020-10735 . This limit can be configured or disabled by environment variable, command line flag, or sys APIs. See the integer string conversion length limitation documentation. The default limit is 4300 digits in string form.",
+                "title": "What’s New In Python 3.11",
+                "section": "What’s New In Python 3.11 > Other CPython Implementation Changes",
+                "anchor": "other-cpython-implementation-changes",
+                "source": "python-3.14-docs-html"
+              },
+              {
+                "document": "python-3.14-docs-html/howto/argparse.html",
+                "chunk_id": 20,
+                "score": 0.7628,
+                "text": "None value, and that cannot be compared to an int value (hence the TypeError exception).\nAnd:\n``` $ python prog.py 4 16 ```\nYou can go quite far just with what we’ve learned so far, and we have only scratched the surface. The argparse module is very powerful, and we’ll explore a bit more of it before we end this tutorial.",
+                "title": "Argparse Tutorial",
+                "section": "Argparse Tutorial > Combining Positional and Optional arguments",
+                "anchor": "combining-positional-and-optional-arguments",
+                "source": "python-3.14-docs-html"
+              },
+              {
+                "document": "python-3.14-docs-html/howto/descriptor.html",
+                "chunk_id": 16,
+                "score": 0.7585,
+                "text": "an int or float') if self.minvalue is not None and value < self.minvalue: raise ValueError( f'Expected {value!r} to be at least {self.minvalue!r}' ) if self.maxvalue is not None and value > self.maxvalue: raise ValueError( f'Expected {value!r} to be no more than {self.maxvalue!r}' )\nclass String(Validator):\ndef __init__(self, minsize=None, maxsize=None, predicate=None): self.minsize = minsize self.maxsize = maxsize self.predicate = predicate\ndef validate(self, value): if not isinstance(value, str): raise TypeError(f'Expected {value!r} to be a str') if self.minsize is not None and len(value) < self.minsize: raise ValueError( f'Expected {value!r} to be no smaller than {self.minsize!r}' ) if self.maxsize is not None and len(value) > self.maxsize: raise ValueError( f'Expected {value!r} to be no bigger than {self.maxsize!r}' ) if self.predicate is not None and not self.predicate(value): raise ValueError( f'Expected {self.predicate} to be true for {value!r}' ) ```",
+                "title": "Descriptor Guide",
+                "section": "Descriptor Guide > Complete Practical Example > Custom validators",
+                "anchor": "custom-validators",
+                "source": "python-3.14-docs-html"
+              },
+              {
+                "document": "python-3.14-docs-html/library/unicodedata.html",
+                "chunk_id": 2,
+                "score": 0.7574,
+                "text": "not given, ValueError is raised: ``` >>> unicodedata.digit('\\N{SUPERSCRIPT NINE}') 9 ```\nunicodedata.numeric(chr, default=None, /) Returns the numeric value assigned to the character chr as float. If no such value is defined, default is returned, or, if not given, ValueError is raised: ``` >>> unicodedata.numeric('½') 0.5 ```\nunicodedata.category(chr) Returns the general category assigned to the character chr as string. General category names consist of two letters. See the General Category Values section of the Unicode Character Database documentation for a list of category codes. For example: ``` >>> unicodedata.category('A') # 'L'etter, 'u'ppercase 'Lu' ```\nunicodedata.bidirectional(chr) Returns the bidirectional class assigned to the character chr as string. If no such value is defined, an empty string is returned. See the Bidirectional Class Values section of the Unicode Character Database documentation for a list of bidirectional codes. For example: ``` >>> unicodedata.bidirectional('\\N{ARABIC-INDIC DIGIT SEVEN}') # 'A'rabic, 'N'umber 'AN' ```\nunicodedata.combining(chr) Returns the canonical combining class assigned to the character chr as integer. Returns 0 if no combining class is defined. See the Canonical Combining Class Values section of the",
+                "title": "unicodedata — Unicode Database",
+                "section": "unicodedata — Unicode Database",
+                "anchor": "module-unicodedata",
+                "source": "python-3.14-docs-html"
+              },
+              {
+                "document": "python-3.14-docs-html/whatsnew/3.7.html",
+                "chunk_id": 158,
+                "score": 0.7546,
+                "text": "What’s New In Python 3.7 > Notable security feature in 3.7.14\nConverting between int and str in bases other than 2 (binary), 4, 8 (octal), 16 (hexadecimal), or 32 such as base 10 (decimal) now raises a ValueError if the number of digits in string form is above a limit to avoid potential denial of service attacks due to the algorithmic complexity. This is a mitigation for CVE 2020-10735 . This limit can be configured or disabled by environment variable, command line flag, or sys APIs. See the integer string conversion length limitation documentation. The default limit is 4300 digits in string form.",
+                "title": "What’s New In Python 3.7",
+                "section": "What’s New In Python 3.7 > Notable security feature in 3.7.14",
+                "anchor": "notable-security-feature-in-3-7-14",
+                "source": "python-3.14-docs-html"
+              }
+            ]
+          }
+        }
+      ],
+      "prompt_tokens": 1502,
+      "completion_tokens": 84,
+      "model_calls": 1,
+      "latency_ms": 1216
+    },
+    {
+      "step": 2,
+      "agent": "agent",
+      "decision": "call_tools",
+      "tools_offered": true,
+      "reasoning": "We need answer: int() raises ValueError for non-numeric string. Cite docs. Search for int() description.",
+      "content": "",
+      "tool_calls": [
+        {
+          "name": "search_knowledge_base",
+          "arguments": {
+            "query": "int(string) raises ValueError non-numeric",
+            "source": "python-3.14-docs-html",
+            "top_k": 5
+          },
+          "result": {
+            "query": "int(string) raises ValueError non-numeric",
+            "matches": [
+              {
+                "document": "python-3.14-docs-html/whatsnew/3.11.html",
+                "chunk_id": 23,
+                "score": 0.7783,
+                "text": "now available using the respective --help-env and --help-xoptions flags, and with the new --help-all . (Contributed by Éric Araujo in bpo-46142 .) Converting between int and str in bases other than 2 (binary), 4, 8 (octal), 16 (hexadecimal), or 32 such as base 10 (decimal) now raises a ValueError if the number of digits in string form is above a limit to avoid potential denial of service attacks due to the algorithmic complexity. This is a mitigation for CVE 2020-10735 . This limit can be configured or disabled by environment variable, command line flag, or sys APIs. See the integer string conversion length limitation documentation. The default limit is 4300 digits in string form.",
+                "title": "What’s New In Python 3.11",
+                "section": "What’s New In Python 3.11 > Other CPython Implementation Changes",
+                "anchor": "other-cpython-implementation-changes",
+                "source": "python-3.14-docs-html"
+              },
+              {
+                "document": "python-3.14-docs-html/howto/descriptor.html",
+                "chunk_id": 16,
+                "score": 0.7738,
+                "text": "an int or float') if self.minvalue is not None and value < self.minvalue: raise ValueError( f'Expected {value!r} to be at least {self.minvalue!r}' ) if self.maxvalue is not None and value > self.maxvalue: raise ValueError( f'Expected {value!r} to be no more than {self.maxvalue!r}' )\nclass String(Validator):\ndef __init__(self, minsize=None, maxsize=None, predicate=None): self.minsize = minsize self.maxsize = maxsize self.predicate = predicate\ndef validate(self, value): if not isinstance(value, str): raise TypeError(f'Expected {value!r} to be a str') if self.minsize is not None and len(value) < self.minsize: raise ValueError( f'Expected {value!r} to be no smaller than {self.minsize!r}' ) if self.maxsize is not None and len(value) > self.maxsize: raise ValueError( f'Expected {value!r} to be no bigger than {self.maxsize!r}' ) if self.predicate is not None and not self.predicate(value): raise ValueError( f'Expected {self.predicate} to be true for {value!r}' ) ```",
+                "title": "Descriptor Guide",
+                "section": "Descriptor Guide > Complete Practical Example > Custom validators",
+                "anchor": "custom-validators",
+                "source": "python-3.14-docs-html"
+              },
+              {
+                "document": "python-3.14-docs-html/library/unicodedata.html",
+                "chunk_id": 2,
+                "score": 0.7709,
+                "text": "not given, ValueError is raised: ``` >>> unicodedata.digit('\\N{SUPERSCRIPT NINE}') 9 ```\nunicodedata.numeric(chr, default=None, /) Returns the numeric value assigned to the character chr as float. If no such value is defined, default is returned, or, if not given, ValueError is raised: ``` >>> unicodedata.numeric('½') 0.5 ```\nunicodedata.category(chr) Returns the general category assigned to the character chr as string. General category names consist of two letters. See the General Category Values section of the Unicode Character Database documentation for a list of category codes. For example: ``` >>> unicodedata.category('A') # 'L'etter, 'u'ppercase 'Lu' ```\nunicodedata.bidirectional(chr) Returns the bidirectional class assigned to the character chr as string. If no such value is defined, an empty string is returned. See the Bidirectional Class Values section of the Unicode Character Database documentation for a list of bidirectional codes. For example: ``` >>> unicodedata.bidirectional('\\N{ARABIC-INDIC DIGIT SEVEN}') # 'A'rabic, 'N'umber 'AN' ```\nunicodedata.combining(chr) Returns the canonical combining class assigned to the character chr as integer. Returns 0 if no combining class is defined. See the Canonical Combining Class Values section of the",
+                "title": "unicodedata — Unicode Database",
+                "section": "unicodedata — Unicode Database",
+                "anchor": "module-unicodedata",
+                "source": "python-3.14-docs-html"
+              },
+              {
+                "document": "python-3.14-docs-html/whatsnew/3.7.html",
+                "chunk_id": 158,
+                "score": 0.7672,
+                "text": "What’s New In Python 3.7 > Notable security feature in 3.7.14\nConverting between int and str in bases other than 2 (binary), 4, 8 (octal), 16 (hexadecimal), or 32 such as base 10 (decimal) now raises a ValueError if the number of digits in string form is above a limit to avoid potential denial of service attacks due to the algorithmic complexity. This is a mitigation for CVE 2020-10735 . This limit can be configured or disabled by environment variable, command line flag, or sys APIs. See the integer string conversion length limitation documentation. The default limit is 4300 digits in string form.",
+                "title": "What’s New In Python 3.7",
+                "section": "What’s New In Python 3.7 > Notable security feature in 3.7.14",
+                "anchor": "notable-security-feature-in-3-7-14",
+                "source": "python-3.14-docs-html"
+              },
+              {
+                "document": "python-3.14-docs-html/whatsnew/3.8.html",
+                "chunk_id": 120,
+                "score": 0.7665,
+                "text": "What’s New In Python 3.8 > Notable security feature in 3.8.14\nConverting between int and str in bases other than 2 (binary), 4, 8 (octal), 16 (hexadecimal), or 32 such as base 10 (decimal) now raises a ValueError if the number of digits in string form is above a limit to avoid potential denial of service attacks due to the algorithmic complexity. This is a mitigation for CVE 2020-10735 . This limit can be configured or disabled by environment variable, command line flag, or sys APIs. See the integer string conversion length limitation documentation. The default limit is 4300 digits in string form.",
+                "title": "What’s New In Python 3.8",
+                "section": "What’s New In Python 3.8 > Notable security feature in 3.8.14",
+                "anchor": "notable-security-feature-in-3-8-14",
+                "source": "python-3.14-docs-html"
+              }
+            ]
+          }
+        }
+      ],
+      "prompt_tokens": 3044,
+      "completion_tokens": 75,
+      "model_calls": 1,
+      "latency_ms": 43663
+    },
+    {
+      "step": 3,
+      "agent": "agent",
+      "decision": "call_tools",
+      "tools_offered": true,
+      "reasoning": "The docs not directly showing but known: int('abc') raises ValueError. Cite maybe builtins exceptions page? The first retrieved context includes TypeError etc but not int. However we can rely on general knowledge but need citation. Might not have direct. Could search for \"int('abc') ValueError\".\n",
+      "content": "",
+      "tool_calls": [
+        {
+          "name": "search_knowledge_base",
+          "arguments": {
+            "query": "int('abc') ValueError",
+            "source": "python-3.14-docs-html",
+            "top_k": 5
+          },
+          "result": {
+            "query": "int('abc') ValueError",
+            "matches": [
+              {
+                "document": "python-3.14-docs-html/howto/argparse.html",
+                "chunk_id": 20,
+                "score": 0.781,
+                "text": "None value, and that cannot be compared to an int value (hence the TypeError exception).\nAnd:\n``` $ python prog.py 4 16 ```\nYou can go quite far just with what we’ve learned so far, and we have only scratched the surface. The argparse module is very powerful, and we’ll explore a bit more of it before we end this tutorial.",
+                "title": "Argparse Tutorial",
+                "section": "Argparse Tutorial > Combining Positional and Optional arguments",
+                "anchor": "combining-positional-and-optional-arguments",
+                "source": "python-3.14-docs-html"
+              },
+              {
+                "document": "python-3.14-docs-html/howto/argparse.html",
+                "chunk_id": 19,
+                "score": 0.732,
+                "text": "in <module> if args.verbosity >= 2: TypeError: '>=' not supported between instances of 'NoneType' and 'int' ```\nFirst output went well, and fixes the bug we had before. That is, we want any value >= 2 to be as verbose as possible. Third output not so good.\nLet’s fix that bug:\n``` import argparse parser = argparse.ArgumentParser() parser.add_argument(\"square\", type=int, help=\"display a square of a given number\") parser.add_argument(\"-v\", \"--verbosity\", action=\"count\", default=0, help=\"increase output verbosity\") args = parser.parse_args() answer = args.square**2 if args.verbosity >= 2: print(f\"the square of {args.square} equals {answer}\") elif args.verbosity >= 1: print(f\"{args.square}^2 == {answer}\") else: print(answer) ```\nWe’ve just introduced yet another keyword, default . We’ve set it to 0 in order to make it comparable to the other int values. Remember that by default, if an optional argument isn’t specified, it gets the None value, and that cannot be compared to an int value (hence the TypeError exception).\nAnd:\n``` $ python prog.py 4 16 ```\nYou can go quite far just with what we’ve learned so far, and we",
+                "title": "Argparse Tutorial",
+                "section": "Argparse Tutorial > Combining Positional and Optional arguments",
+                "anchor": "combining-positional-and-optional-arguments",
+                "source": "python-3.14-docs-html"
+              },
+              {
+                "document": "python-3.14-docs-html/tutorial/modules.html",
+                "chunk_id": 17,
+                "score": 0.7305,
+                "text": "'UnicodeDecodeError', 'UnicodeEncodeError', 'UnicodeError', 'UnicodeTranslateError', 'UnicodeWarning', 'UserWarning', 'ValueError', 'Warning', 'ZeroDivisionError', '_', '__build_class__', '__debug__', '__doc__', '__import__', '__name__', '__package__', 'abs', 'all', 'any', 'ascii', 'bin', 'bool', 'bytearray', 'bytes', 'callable', 'chr', 'classmethod', 'compile', 'complex', 'copyright', 'credits', 'delattr', 'dict', 'dir', 'divmod', 'enumerate', 'eval', 'exec', 'exit', 'filter', 'float', 'format', 'frozenset', 'getattr', 'globals', 'hasattr', 'hash', 'help', 'hex', 'id', 'input', 'int', 'isinstance', 'issubclass', 'iter', 'len', 'license', 'list', 'locals', 'map', 'max', 'memoryview', 'min', 'next', 'object', 'oct', 'open', 'ord', 'pow', 'print', 'property', 'quit', 'range', 'repr', 'reversed', 'round', 'set', 'setattr', 'slice', 'sorted', 'staticmethod', 'str', 'sum', 'super', 'tuple', 'type', 'vars', 'zip'] ```",
+                "title": "6. Modules",
+                "section": "6. Modules > 6.3. The dir() Function",
+                "anchor": "the-dir-function",
+                "source": "python-3.14-docs-html"
+              },
+              {
+                "document": "python-3.14-docs-html/howto/descriptor.html",
+                "chunk_id": 16,
+                "score": 0.7276,
+                "text": "an int or float') if self.minvalue is not None and value < self.minvalue: raise ValueError( f'Expected {value!r} to be at least {self.minvalue!r}' ) if self.maxvalue is not None and value > self.maxvalue: raise ValueError( f'Expected {value!r} to be no more than {self.maxvalue!r}' )\nclass String(Validator):\ndef __init__(self, minsize=None, maxsize=None, predicate=None): self.minsize = minsize self.maxsize = maxsize self.predicate = predicate\ndef validate(self, value): if not isinstance(value, str): raise TypeError(f'Expected {value!r} to be a str') if self.minsize is not None and len(value) < self.minsize: raise ValueError( f'Expected {value!r} to be no smaller than {self.minsize!r}' ) if self.maxsize is not None and len(value) > self.maxsize: raise ValueError( f'Expected {value!r} to be no bigger than {self.maxsize!r}' ) if self.predicate is not None and not self.predicate(value): raise ValueError( f'Expected {self.predicate} to be true for {value!r}' ) ```",
+                "title": "Descriptor Guide",
+                "section": "Descriptor Guide > Complete Practical Example > Custom validators",
+                "anchor": "custom-validators",
+                "source": "python-3.14-docs-html"
+              },
+              {
+                "document": "python-3.14-docs-html/whatsnew/2.4.html",
+                "chunk_id": 25,
+                "score": 0.7262,
+                "text": "a/b Decimal(\"20.64739884393063583815028902\") >>> a ** 2 Decimal(\"1275.9184\") >>> a**b Traceback (most recent call last): ... decimal.InvalidOperation: x ** (non-integer) ```\nYou can combine Decimal instances with integers, but not with floating-point numbers:\n``` >>> a + 4 Decimal(\"39.72\") >>> a + 4.5 Traceback (most recent call last): ... TypeError: You can interact Decimal only with int, long or Decimal data types. >>> ```\nDecimal numbers can be used with the math and cmath modules, but note that they’ll be immediately converted to floating-point numbers before the operation is performed, resulting in a possible loss of precision and accuracy. You’ll also get back a regular floating-point number and not a Decimal .\n``` >>> import math, cmath >>> d = decimal.Decimal('123456789012.345') >>> math.sqrt(d) 351364.18288201344 >>> cmath.sqrt(-d) 351364.18288201344j ```\nDecimal instances have a sqrt() method that returns a Decimal , but if you need other things such as trigonometric functions you’ll have to implement them.\n``` >>> d.sqrt() Decimal(\"351364.1828820134592177245001\") ```",
+                "title": "What’s New in Python 2.4",
+                "section": "What’s New in Python 2.4 > PEP 327: Decimal Data Type > The Decimal type",
+                "anchor": "the-decimal-type",
+                "source": "python-3.14-docs-html"
+              }
+            ]
+          }
+        }
+      ],
+      "prompt_tokens": 4679,
+      "completion_tokens": 109,
+      "model_calls": 1,
+      "latency_ms": 24469
+    },
+    {
+      "step": 4,
+      "agent": "agent",
+      "decision": "final_answer",
+      "tools_offered": false,
+      "reasoning": "We need answer: int() raises ValueError for non-numeric string. Cite docs maybe builtins exceptions mention ValueError for wrong value. Use builtins/exceptions.html where ValueError described. That indicates passing wrong value raises ValueError. Use that citation.",
+      "content": "{\"answer\":\"int() raises a ValueError when given a non‑numeric string.\",\"confidence\":0.97,\"citations\":[\"python-3.14-docs-html/builtins/exceptions.html\"]}",
+      "tool_calls": [],
+      "prompt_tokens": 6219,
+      "completion_tokens": 107,
+      "model_calls": 1,
+      "latency_ms": 37233
+    }
+  ],
+  "iterations": 4,
+  "termination": "success",
+  "error": "",
+  "final": {
+    "answer": "int() raises a ValueError when given a non‑numeric string.",
+    "confidence": 0.97,
+    "citations": [
+      "python-3.14-docs-html/builtins/exceptions.html"
+    ],
+    "agent_mode": "single"
+  },
+  "usage": {
+    "prompt_tokens": 15444,
+    "completion_tokens": 375,
+    "total_tokens": 15819,
+    "model_calls": 4,
+    "wait_ms": 101906
+  },
+  "latency_ms": 106610,
+  "latency_net_ms": 4704,
+  "cost_usd": 0.0025415999999999998,
+  "harness": {
+    "case_id": "int-error",
+    "kind": "single_hop",
+    "mode": "single",
+    "fault": "none",
+    "agent_mode": "single",
+    "answered": true,
+    "completed": true,
+    "grounded": true,
+    "declined": false,
+    "tools_correct": true,
+    "tools_called": [
+      "search_knowledge_base",
+      "search_knowledge_base",
+      "search_knowledge_base"
+    ],
+    "argument_problems": [],
+    "tool_errors": [],
+    "retrieval_broke": false,
+    "documents": [
+      "python-3.14-docs-html/builtins/exceptions.html",
+      "python-3.14-docs-html/builtins/stdtypes.html",
+      "python-3.14-docs-html/howto/argparse.html",
+      "python-3.14-docs-html/howto/descriptor.html",
+      "python-3.14-docs-html/library/unicodedata.html",
+      "python-3.14-docs-html/tutorial/modules.html",
+      "python-3.14-docs-html/whatsnew/2.4.html",
+      "python-3.14-docs-html/whatsnew/3.11.html",
+      "python-3.14-docs-html/whatsnew/3.7.html",
+      "python-3.14-docs-html/whatsnew/3.8.html"
+    ],
+    "matched_documents": [
+      "builtins/exceptions.html"
+    ],
+    "iterations": 4,
+    "prompt_tokens": 15444,
+    "completion_tokens": 375,
+    "total_tokens": 15819,
+    "model_calls": 4,
+    "latency_ms": 106610,
+    "confidence": 0.97,
+    "researchers": 0,
+    "failure": "",
+    "reason": "",
+    "answer": "int() raises a ValueError when given a non‑numeric string."
+  }
+}

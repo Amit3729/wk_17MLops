@@ -1,0 +1,178 @@
+{
+  "run_name": "v4",
+  "prompt_version": "v4",
+  "config": {
+    "prompt_version": "v4",
+    "prompt_file": "prompt_v4.txt",
+    "agent_mode": "single",
+    "provider": "groq",
+    "model": "openai/gpt-oss-120b",
+    "temperature": 0.2,
+    "top_p": 0.9,
+    "top_k": 3,
+    "max_iterations": 3,
+    "reasoning_effort": "low",
+    "recover_tool_answers": true,
+    "note": "Cost cut after the golden set was frozen. v3 traces: every search asked for top_k 5 and the loop also pre-retrieved top_k 4 chunks, so json-indent spent 5,245 prompt tokens for 2 turns on json.html chunks it already had; max 3 turns were ever used of 4. v4: pre-retrieval top_k 4->3, prompt asks for top_k 3 per search and short answers, max_iterations 4->3."
+  },
+  "case": {
+    "id": "out-of-corpus-pricing",
+    "kind": "unanswerable",
+    "question": "What does the OpenAI batch API cost per million tokens in 2026?",
+    "expect_documents": [],
+    "expect_tools": [],
+    "forbid_tools": [],
+    "must_include": [],
+    "expect_decline": true
+  },
+  "prefetched_context": [
+    {
+      "document": "serving.md",
+      "anchor": "",
+      "section": "serving",
+      "score": 0.6672,
+      "text": "# Serving and Reliability\n## Providers\nThe assistant talks to any OpenAI-compatible chat completions endpoint. Three provider modes exist. The `local` mode runs without an API key and without a model; it answers from retrieved context and selects tools heuristically, which makes the project demonstrable with no credentials. The `openai` mode calls a hosted model. The `vllm` mode calls a self-hosted vLLM server.\nvLLM exposes an OpenAI-compatible API for serving open-source models such as Llama 3 or Mistral locally. It raises throughput using paged attention, which stores the key-value cache in non-contiguous pages to cut memory fragmentation, and continuous batching, which admits new requests into a running batch instead of waiting for the whole batch to finish. Tool calling on vLLM requires the server to be started with automatic tool choice and a tool-call parser matching the model family.\n## Tool calling\nTools are declared as OpenAI function schemas and the model chooses which to call. The registry is an allow-list: a name the model invents is rejected, arguments are parsed and validated before execution,"
+    },
+    {
+      "document": "knowledge.md",
+      "anchor": "",
+      "section": "knowledge",
+      "score": 0.6392,
+      "text": "# Engineering AI Systems\nRetrieval-Augmented Generation combines a retriever with a generator. Documents are split into chunks, embedded as vectors, and searched using similarity before the language model writes an answer.\nProduction assistants need boundaries around the model. Structured output makes responses predictable, tool calling gives the model controlled capabilities, and retries, rate limiting, caching, and provider fallback improve reliability.\nvLLM exposes an OpenAI-compatible API for serving open-source models such as Llama or Mistral locally. Docker Compose can run the application services together, while model weights are mounted from a host cache."
+    },
+    {
+      "document": "serving.md",
+      "anchor": "",
+      "section": "serving",
+      "score": 0.6189,
+      "text": "model family.\n## Tool calling\nTools are declared as OpenAI function schemas and the model chooses which to call. The registry is an allow-list: a name the model invents is rejected, arguments are parsed and validated before execution, and a failing tool returns a JSON error back to the model so it can correct itself rather than taking the request down. The calculator evaluates arithmetic by walking a restricted abstract syntax tree, so expressions cannot reach imports, attributes, or function calls. The loop is bounded by a maximum iteration count, and the final turn is issued with tools disabled so the model must produce an answer.\n## Reliability\nTransient upstream failures are retried with exponential backoff and jitter. Only retryable conditions are retried: timeouts, connection errors, and the status codes 408, 409, 425, 429, 500, 502, 503 and 504. An authentication or validation error fails immediately instead of burning the retry budget. If the primary provider is still failing, a configured fallback provider serves the request and the response reports which provider answered.\nRequests are"
+    }
+  ],
+  "steps": [
+    {
+      "step": 1,
+      "agent": "agent",
+      "decision": "call_tools",
+      "tools_offered": true,
+      "reasoning": "Need to search.",
+      "recovered_from": "",
+      "content": "",
+      "tool_calls": [
+        {
+          "name": "search_knowledge_base",
+          "arguments": {
+            "query": "OpenAI batch API cost per million tokens 2026",
+            "source": "root",
+            "top_k": 3
+          },
+          "result": {
+            "query": "OpenAI batch API cost per million tokens 2026",
+            "matches": [
+              {
+                "document": "serving.md",
+                "chunk_id": 0,
+                "score": 0.668,
+                "text": "# Serving and Reliability\n## Providers\nThe assistant talks to any OpenAI-compatible chat completions endpoint. Three provider modes exist. The `local` mode runs without an API key and without a model; it answers from retrieved context and selects tools heuristically, which makes the project demonstrable with no credentials. The `openai` mode calls a hosted model. The `vllm` mode calls a self-hosted vLLM server.\nvLLM exposes an OpenAI-compatible API for serving open-source models such as Llama 3 or Mistral locally. It raises throughput using paged attention, which stores the key-value cache in non-contiguous pages to cut memory fragmentation, and continuous batching, which admits new requests into a running batch instead of waiting for the whole batch to finish. Tool calling on vLLM requires the server to be started with automatic tool choice and a tool-call parser matching the model family.\n## Tool calling\nTools are declared as OpenAI function schemas and the model chooses which to call. The registry is an allow-list: a name the model invents is rejected, arguments are parsed and validated before execution,",
+                "title": "serving",
+                "section": "serving",
+                "anchor": "",
+                "source": "root"
+              },
+              {
+                "document": "knowledge.md",
+                "chunk_id": 0,
+                "score": 0.6448,
+                "text": "# Engineering AI Systems\nRetrieval-Augmented Generation combines a retriever with a generator. Documents are split into chunks, embedded as vectors, and searched using similarity before the language model writes an answer.\nProduction assistants need boundaries around the model. Structured output makes responses predictable, tool calling gives the model controlled capabilities, and retries, rate limiting, caching, and provider fallback improve reliability.\nvLLM exposes an OpenAI-compatible API for serving open-source models such as Llama or Mistral locally. Docker Compose can run the application services together, while model weights are mounted from a host cache.",
+                "title": "knowledge",
+                "section": "knowledge",
+                "anchor": "",
+                "source": "root"
+              },
+              {
+                "document": "serving.md",
+                "chunk_id": 1,
+                "score": 0.6139,
+                "text": "model family.\n## Tool calling\nTools are declared as OpenAI function schemas and the model chooses which to call. The registry is an allow-list: a name the model invents is rejected, arguments are parsed and validated before execution, and a failing tool returns a JSON error back to the model so it can correct itself rather than taking the request down. The calculator evaluates arithmetic by walking a restricted abstract syntax tree, so expressions cannot reach imports, attributes, or function calls. The loop is bounded by a maximum iteration count, and the final turn is issued with tools disabled so the model must produce an answer.\n## Reliability\nTransient upstream failures are retried with exponential backoff and jitter. Only retryable conditions are retried: timeouts, connection errors, and the status codes 408, 409, 425, 429, 500, 502, 503 and 504. An authentication or validation error fails immediately instead of burning the retry budget. If the primary provider is still failing, a configured fallback provider serves the request and the response reports which provider answered.\nRequests are",
+                "title": "serving",
+                "section": "serving",
+                "anchor": "",
+                "source": "root"
+              }
+            ]
+          }
+        }
+      ],
+      "prompt_tokens": 1392,
+      "completion_tokens": 59,
+      "model_calls": 1,
+      "latency_ms": 633
+    },
+    {
+      "step": 2,
+      "agent": "agent",
+      "decision": "final_answer",
+      "tools_offered": true,
+      "reasoning": "",
+      "recovered_from": "tool_use_failed: pseudo-tool 'json'",
+      "content": "{\"answer\": \"The available documentation does not contain information about the OpenAI batch API pricing per million tokens for 2026.\", \"confidence\": 0.9, \"citations\": []}",
+      "tool_calls": [],
+      "prompt_tokens": 0,
+      "completion_tokens": 0,
+      "model_calls": 1,
+      "latency_ms": 52586
+    }
+  ],
+  "iterations": 2,
+  "termination": "success",
+  "error": "",
+  "final": {
+    "answer": "The available documentation does not contain information about the OpenAI batch API pricing per million tokens for 2026.",
+    "confidence": 0.9,
+    "citations": [],
+    "agent_mode": "single"
+  },
+  "usage": {
+    "prompt_tokens": 1392,
+    "completion_tokens": 59,
+    "total_tokens": 1451,
+    "model_calls": 2,
+    "wait_ms": 51702
+  },
+  "latency_ms": 53236,
+  "latency_net_ms": 1534,
+  "cost_usd": 0.0002442,
+  "harness": {
+    "case_id": "out-of-corpus-pricing",
+    "kind": "unanswerable",
+    "mode": "single",
+    "fault": "none",
+    "agent_mode": "single",
+    "answered": true,
+    "completed": true,
+    "grounded": true,
+    "declined": true,
+    "tools_correct": true,
+    "tools_called": [
+      "search_knowledge_base"
+    ],
+    "argument_problems": [],
+    "tool_errors": [],
+    "retrieval_broke": false,
+    "documents": [
+      "knowledge.md",
+      "serving.md"
+    ],
+    "matched_documents": [],
+    "iterations": 2,
+    "prompt_tokens": 1392,
+    "completion_tokens": 59,
+    "total_tokens": 1451,
+    "model_calls": 2,
+    "latency_ms": 53236,
+    "confidence": 0.9,
+    "researchers": 0,
+    "failure": "",
+    "reason": "",
+    "answer": "The available documentation does not contain information about the OpenAI batch API pricing per million tokens for 2026."
+  }
+}
