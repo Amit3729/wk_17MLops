@@ -1,0 +1,209 @@
+{
+  "scenario": "drifted",
+  "checked_at": "2026-09-26T15:03:00+00:00",
+  "reference_rows": 4930,
+  "current_rows": 2113,
+  "current_path": "data/current_drifted.csv",
+  "production_model": {
+    "version": 1,
+    "run_id": "5c239585eeb14095b7ec3d1531b5ab81"
+  },
+  "data_drift": {
+    "n_features": 19,
+    "n_drifted": 4,
+    "share_drifted": 0.21052631578947367,
+    "drifted_columns": [
+      "Contract",
+      "MonthlyCharges",
+      "TotalCharges",
+      "tenure"
+    ],
+    "per_column": {
+      "tenure": {
+        "score": 0.34276545982758344,
+        "method": "Wasserstein distance (normed)",
+        "threshold": 0.1,
+        "drifted": true
+      },
+      "MonthlyCharges": {
+        "score": 0.6377060753872779,
+        "method": "Wasserstein distance (normed)",
+        "threshold": 0.1,
+        "drifted": true
+      },
+      "TotalCharges": {
+        "score": 0.26230145359693297,
+        "method": "Wasserstein distance (normed)",
+        "threshold": 0.1,
+        "drifted": true
+      },
+      "gender": {
+        "score": 0.022119942016243847,
+        "method": "Jensen-Shannon distance",
+        "threshold": 0.1,
+        "drifted": false
+      },
+      "SeniorCitizen": {
+        "score": 0.028840105898828867,
+        "method": "Jensen-Shannon distance",
+        "threshold": 0.1,
+        "drifted": false
+      },
+      "Partner": {
+        "score": 0.04564556390811603,
+        "method": "Jensen-Shannon distance",
+        "threshold": 0.1,
+        "drifted": false
+      },
+      "Dependents": {
+        "score": 0.03628742239789087,
+        "method": "Jensen-Shannon distance",
+        "threshold": 0.1,
+        "drifted": false
+      },
+      "PhoneService": {
+        "score": 0.014047726926693626,
+        "method": "Jensen-Shannon distance",
+        "threshold": 0.1,
+        "drifted": false
+      },
+      "MultipleLines": {
+        "score": 0.03789396818619401,
+        "method": "Jensen-Shannon distance",
+        "threshold": 0.1,
+        "drifted": false
+      },
+      "InternetService": {
+        "score": 0.03228127411126543,
+        "method": "Jensen-Shannon distance",
+        "threshold": 0.1,
+        "drifted": false
+      },
+      "OnlineSecurity": {
+        "score": 0.0641403406408279,
+        "method": "Jensen-Shannon distance",
+        "threshold": 0.1,
+        "drifted": false
+      },
+      "OnlineBackup": {
+        "score": 0.05764976907416001,
+        "method": "Jensen-Shannon distance",
+        "threshold": 0.1,
+        "drifted": false
+      },
+      "DeviceProtection": {
+        "score": 0.07810842748216759,
+        "method": "Jensen-Shannon distance",
+        "threshold": 0.1,
+        "drifted": false
+      },
+      "TechSupport": {
+        "score": 0.07554614985829539,
+        "method": "Jensen-Shannon distance",
+        "threshold": 0.1,
+        "drifted": false
+      },
+      "StreamingTV": {
+        "score": 0.07082894354795552,
+        "method": "Jensen-Shannon distance",
+        "threshold": 0.1,
+        "drifted": false
+      },
+      "StreamingMovies": {
+        "score": 0.06393684743094104,
+        "method": "Jensen-Shannon distance",
+        "threshold": 0.1,
+        "drifted": false
+      },
+      "Contract": {
+        "score": 0.19159514319875304,
+        "method": "Jensen-Shannon distance",
+        "threshold": 0.1,
+        "drifted": true
+      },
+      "PaperlessBilling": {
+        "score": 0.024517607113424513,
+        "method": "Jensen-Shannon distance",
+        "threshold": 0.1,
+        "drifted": false
+      },
+      "PaymentMethod": {
+        "score": 0.07284010415602366,
+        "method": "Jensen-Shannon distance",
+        "threshold": 0.1,
+        "drifted": false
+      }
+    }
+  },
+  "target_and_custom": {
+    "metric_values": {
+      "ValueDrift(column=Churn,method=Jensen-Shannon distance,threshold=0.1)": 0.10227825965033764,
+      "ValueDrift(column=prediction,method=Jensen-Shannon distance,threshold=0.1)": 0.09678907348257504,
+      "ValueDrift(column=churn_proba,method=Wasserstein distance (normed),threshold=0.1)": 0.37701093716056666,
+      "MeanDifference(column=MonthlyCharges)": 19.284618343510516,
+      "SegmentRateShift(target=Churn,positive=1)": 0.13601072852399276,
+      "SegmentRateShift(target=Churn,positive=1,segment_column=Contract,segment_value=Month-to-month)": 0.04001479289940829
+    },
+    "tests": [
+      {
+        "name": "Value Drift for column Churn",
+        "status": "FAIL",
+        "description": "Drift score is 0.10. The drift detection method is Jensen-Shannon distance. The drift threshold is 0.10."
+      },
+      {
+        "name": "Value Drift for column prediction",
+        "status": "SUCCESS",
+        "description": "Drift score is 0.10. The drift detection method is Jensen-Shannon distance. The drift threshold is 0.10."
+      },
+      {
+        "name": "Value Drift for column churn_proba",
+        "status": "FAIL",
+        "description": "Drift score is 0.38. The drift detection method is Wasserstein distance (normed). The drift threshold is 0.10."
+      },
+      {
+        "name": "Absolute change in mean MonthlyCharges (current vs reference): Less or Equal 5.000",
+        "status": "FAIL",
+        "description": "Absolute change in mean MonthlyCharges (current vs reference): Actual value 19.285 >= 5.000"
+      },
+      {
+        "name": "Absolute shift in Churn rate (current vs reference): Less or Equal 0.050",
+        "status": "FAIL",
+        "description": "Absolute shift in Churn rate (current vs reference): Actual value 0.136 >= 0.050"
+      },
+      {
+        "name": "Absolute shift in Churn rate where Contract == 'Month-to-month' (current vs reference): Less or Equal 0.050",
+        "status": "SUCCESS",
+        "description": "Absolute shift in Churn rate where Contract == 'Month-to-month' (current vs reference): Actual value 0.040 < 0.050"
+      }
+    ],
+    "n_tests_failed": 4
+  },
+  "model_quality": {
+    "reference_holdout": {
+      "f1": 0.6210826210826211,
+      "recall": 0.8320610687022901,
+      "roc_auc": 0.840878178904306,
+      "churn_rate": 0.2657200811359026,
+      "predicted_churn_rate": 0.4462474645030426
+    },
+    "current": {
+      "f1": 0.6471774193548387,
+      "recall": 0.7570754716981132,
+      "roc_auc": 0.7459598031173093,
+      "churn_rate": 0.40132513014671084,
+      "predicted_churn_rate": 0.5376242309512541
+    }
+  },
+  "retrain_recommended": true,
+  "reasons": [
+    "target (Churn) distribution drifted",
+    "custom test failed: Absolute change in mean MonthlyCharges (current vs reference): Actual value 19.285 >= 5.000",
+    "custom test failed: Absolute shift in Churn rate (current vs reference): Actual value 0.136 >= 0.050",
+    "ROC-AUC dropped 0.095 (> 0.05) on labelled current data"
+  ],
+  "reports": {
+    "data_drift": "reports/data_drift_report.html",
+    "target_drift": "reports/target_drift_report.html",
+    "performance": "reports/model_performance_report.html"
+  }
+}
